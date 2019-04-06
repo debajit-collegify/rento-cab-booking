@@ -9,7 +9,23 @@ import {
     Input,
     InputGroup,
     InputGroupAddon,
-    Button, Card, CardTitle, Badge, CardText
+    Button,
+    Card,
+    CardTitle,
+    Badge,
+    CardText,
+    ListGroupItemHeading,
+    UncontrolledCollapse,
+    FormGroup,
+    FormFeedback,
+    FormText,
+    CustomInput,
+    UncontrolledTooltip,
+    Spinner,
+    UncontrolledPopover,
+    PopoverHeader,
+    PopoverBody,
+    ListGroupItemText, Pagination, PaginationItem, PaginationLink
 }
     from 'reactstrap';
 
@@ -48,253 +64,345 @@ class CabDriverDetails extends React.Component {
         parentThis.setState(state);
     }
 
+    closeForm = () => {
+        const parentThis = this;
+        const state = parentThis.state;
+        state.variable.showForm = false;
+        parentThis.setState(state);
+    }
+
 
 
     render() {
 
         return (
-            <div>
 
-                <ListGroup className={'margin-top-off'}>
-                    <ListGroupItem className={'margin-bottom-x padding-2x card-shadow pulse-highlight'}>
-                        <Row>
-                            <Col sm={2} className={'text-center'}>
-                                <span className="font-1-4x pl-3 pr-3 pt-2 pb-2 black-text bold grey lighten-4 top-off left">badge</span>
-                            </Col>
-                            <Col sm={{size: 2, offset: 7}}
-                                 className={'padding-right-off margin-top-0-5x text-center'}>
-                            </Col>
-                        </Row>
-                        <hr/>
-                        <Row>
-                            <Col sm={6} className={'text-left mt-1'}>
-                                <Label for="title" className="font-1-4x grey-text text-darken-2 float-left"> Title</Label>
-                                <Input name="paymentTitle"
-                                       /*className={`${state.validationTest && (!Validation.stringValidate(state.SubscriptionList.paymentTitle) && 'border-red-x')}`}*/
-                                       type="text" />
-                            </Col>
-                            <Col sm={{size: 3}} className={'text-left mt-1'}>
-                                <Label className="font-1-4x text-darken-2 grey-text float-left">Amount</Label>
+           <div>
+               <div className="jumbotron">
 
-                                <InputGroup bSsize="md">
-                                    <InputGroupAddon addonType="prepend">RS</InputGroupAddon>
-                                    <Input type="number"
-                                           /*className={`${state.validationTest && (!Validation.positiveNumber(state.SubscriptionList.paymentPrice) && 'border-red-x')}`}*/
-                                           name="paymentPrice" />
-                                </InputGroup>
+                   <div className="jumbotron" style={{backgroundColor: '#e1e1d0'}}>
 
-                            </Col>
-                            <Col sm={{size: 3}} className={'text-left mt-1'}>
-                                <Label className="font-1-4x grey-text text-darken-2 float-left"> Type</Label>
-                                <Input size="md" type="select"
-                                      /* className={`${state.validationTest && (!Validation.stringValidate(state.SubscriptionList.paymentType) && 'border-red-x')}`}*/
-                                       name="paymentType" >
-                                    <option value="">Choose Type</option>
-                                    <option value="paid">Paid</option>
-                                    <option value="trial">Trial</option>
-                                </Input>
+                       <ListGroup className={'margin-top-2x'}>
+                           <ListGroupItem className={'grey lighten-5'}>
+                               <ListGroupItemHeading id="cis" className={'pt-1 black-text pointer font-1-8x'}>
+                                   {/*<i className={'material-icons left font-1-8x mr-1 relative'}>assignment_ind</i>*/}
+                                   Cab Information
+                                   {/*<i className='material-icons float-right font-2x'>arrow_drop_down_circle</i>*/}
+                               </ListGroupItemHeading>
+                               <UncontrolledCollapse toggler="#cis" isOpen={'true'}>
+                                   <ListGroup className={'mt-3 card-shadow'}>
+                                       <ListGroupItem className={'padding-2x'}>
+                                           <FormGroup className="inline">
+                                               <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Registration Number</Label>
+                                               <Input type="text"
 
-                            </Col>
-                        </Row>
-                        <Row className="margin-top-1-5x">
-                            <Col sm={6} className={'text-left mt-1'}>
+                                                      name="name" />
+                                           </FormGroup>
 
-                                <Label for="desc" className="font-1-4x grey-text text-darken-2 float-left">Description</Label>
-                                <textarea name="paymentDescription"
-                                          /*className={`form-control ${state.validationTest && (!Validation.stringValidate(state.SubscriptionList.paymentDescription) && 'border-red-x')}`}*/
-                                          rows="3" />
-                            </Col>
-                            <Col sm={{size: 3 }} className={'text-left mt-1'}>
-                                <Label className="font-1-4x text-darken-2 grey-text float-left">Currency</Label>
-                                <Input size="md" type="select"
-                                       /*className={`${state.validationTest && (!Validation.stringValidate(state.SubscriptionList.currencyId) && 'border-red-x')}`}*/
-                                       name="currencyId">
-                                    <option value="">Choose Currency</option>
+                                           <FormGroup className={'mt-4'}>
+                                               <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Make</Label>
+                                               <Input type='textarea' name="address1"
+                                               /> {/*invalid*/}
+                                               <FormFeedback>Oh noes! that name is already taken</FormFeedback>
+                                               <FormText>Example help text that remains unchanged.</FormText>
+                                           </FormGroup>
 
-                                </Input>
-                            </Col>
-                            <Col sm={{size: 3 }} className={'text-left mt-1'}>
-                                <Label className="font-1-4x text-darken-2 grey-text float-left">Subscription</Label>
-                                <Input size="md" name="paymentDuration"
-                                      /* className={`${state.validationTest && (!Validation.stringValidate(state.SubscriptionList.paymentDuration) && 'border-red-x')}`}*/
-                                       type="select">
-                                    <option value="">Choose</option>
-                                    <option value="1">1 Day</option>
-                                    <option value="3">3 Days</option>
-                                    <option value="7">7 Days</option>
-                                    <option value="30">1 Month</option>
-                                    <option value="90">3 Months</option>
-                                    <option value="180">6 Months</option>
-                                    <option value="365">1 Year</option>
-                                    <option value="730">2 Years</option>
-                                    <option value="36500">Lifetime</option>
+                                           <FormGroup className={'mt-4'}>
+                                               <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Model</Label>
+                                               <Input type={'textarea'}  name="address2"
 
-                                </Input>
+                                               />
+                                           </FormGroup>
 
-                            </Col>
+                                           <Row className={'mt-3'}>
+                                               <Col sm={3}>
+                                                   <FormGroup>
+                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Cab Type</Label>
+                                                       <Input type="text" name="state"
+                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.userDetails.state) && 'border-red-x')}`}*/
+                                                       />
+                                                   </FormGroup>
+                                               </Col>
+                                               <Col sm={3}>
+                                                   <FormGroup>
+                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>State</Label>
+                                                       <Input type="text" name="state"
+                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.userDetails.state) && 'border-red-x')}`}*/
+                                                       />
+                                                   </FormGroup>
+                                               </Col>
+                                               <Col sm={3}>
+                                                   <FormGroup>
+                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>District</Label>
+                                                       <Input type="text" name="dist"
+                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.userDetails.dist) && 'border-red-x')}`}*/
 
-                        </Row>
+                                                       />
+                                                   </FormGroup>
+                                               </Col>
+                                               <Col sm={3}>
+                                                   <FormGroup>
+                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>postal code</Label>
+                                                       <Input type="text" name="pin"
+                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.userDetails.pin) && 'border-red-x')}`}*/
+                                                       />
+                                                   </FormGroup>
+                                               </Col>
+                                           </Row>
 
-                        <Row className="margin-top-1-5x">
-                            <Col sm={{size: 2, offset: 10}} className={'padding-left-off float-right'}>
-                                <Button
-
-                                    className="float-right btn-action-control box-shadow text-center no-radius ripple padding-0-2x"
-                                    style={{lineHeight: "1px"}}>
-
-                                    <i className="material-icons">check</i>
-
-                                </Button>
-                                <Button
-                                    outline
-                                    className="float-right margin-right-0-2x box-shadow text-center no-radius ripple padding-0-2x"
-                                    color="secondary" style={{lineHeight: "1px"}} >
-                                    <i className="material-icons">close</i>
-                                </Button>
-                            </Col>
-                        </Row>
-                    </ListGroupItem>
-                </ListGroup>
-
-                {/*{
-                    (this.state.variable.loader) && <Row className={'margin-top-2x padding-top-x'}>
-                        {
-                            [...Array(8)].map((x, i) =>
-                                <Col sm={3} className={'text-center mt-1'} key={i}>
-                                    <Card body outline className="small-border padding-2x card-shadow pointer">
-                                        <ContentLoader
-                                            height={160}
-                                            width={200}
-                                            speed={1}
-                                            primaryColor="#e2e2e2"
-                                            secondaryColor="#ecebeb">
-                                            <rect x="70" y="15" rx="4" ry="4" width="117" height="6.4"/>
-                                            <rect x="70" y="35" rx="3" ry="3" width="85" height="6.4"/>
-                                            <rect x="0" y="80" rx="3" ry="3" width="350" height="6.4"/>
-                                            <rect x="0" y="100" rx="3" ry="3" width="380" height="6.4"/>
-                                            <rect x="0" y="120" rx="3" ry="3" width="201" height="6.4"/>
-                                        </ContentLoader>
-                                    </Card>
-                                </Col>
-                            )
-                        }
-                    </Row>
-                }*/}
-
-                <ListGroup className={'margin-top-off transparent'}>
-                    <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }} >
-                        <div className="font-2x" style={{flexGrow:1}}>
-                            Filters:
-                        </div>
-                        <div  className="ml-3 mr-2 flex">
-                            <span className={'font-1-4x grey-text text-darken-5 mt-1 ml-2 mr-2'}>By Country :</span>
-                            <Input size="sm" type="select" className={'border-radius-25'} style={{width: '6rem'}} name="country" >
-                                <option value=''>Country</option>
-                                <option value='all'>All</option>
-
-                            </Input>
-                        </div>
-                        <div className="ml-3 mr-2 flex">
-                            <span className={'font-1-4x grey-text text-darken-5 mt-1 ml-2 mr-2'}>By Currency :</span>
-                            <Input size="sm" type="select" name="currency" style={{width: '6rem'}} >
-                                <option value="">Currency</option>
-                                <option value="all" >All</option>
-
-                            </Input>
-                        </div>
-                    </div>
-
-
-                    <Row className={`mt-3`}>
-                        <Col sm={4} className={'text-center margin-bottom-x'}>
-                            <Card body outline className="small-border card-shadow pointer" style={{height: '17rem'}} onClick={this.addNew.bind(this)} >
-                                <CardTitle className="margin-top-3x">
-                                    <Badge pill style={{width: 75, height: 75, lineHeight:6.5}}
-                                           className="auto grey lighten-3 no-border">
-                                        <i className="circle material-icons grey-text font-4x" style={{padding: '10px'}}>add</i>
-                                    </Badge>
-                                </CardTitle>
-                                <CardText className={'mt-1 mb-0 font-1-5x grey-text text-darken-4'}>Add New</CardText>
-                            </Card>
-                        </Col>
+                                           {/*<Row className={'mt-6'}>
+                                               <Col sm={6}>
+                                                   <FormGroup>
+                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>mobile number</Label>
+                                                       <Input type="text" name="mobile"
+                                                           className={`${state.validationTest && (!Validation.stringValidate(state.billing.userDetails.mobile) && 'border-red-x')}`}
+                                                       />
+                                                   </FormGroup>
+                                               </Col>
+                                                <Col sm={4}>
+                                                <FormGroup>
+                                                    <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>alternative number</Label>
+                                                    <Input />
+                                                </FormGroup>
+                                            </Col>
+                                               <Col sm={6} className="float-right">
+                                                   <FormGroup>
+                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>email address</Label>
+                                                       <Input type="text" name="email"
+                                                           className={`${state.validationTest && (!Validation.stringValidate(state.billing.userDetails.email) && 'border-red-x')}`}
+                                                       />
+                                                   </FormGroup>
+                                               </Col>
+                                           </Row>*/}
+                                       </ListGroupItem>
+                                   </ListGroup>
+                               </UncontrolledCollapse>
+                           </ListGroupItem>
+                       </ListGroup>
 
 
 
-                                <Col sm={4} className={'text-center margin-bottom-2x hvr-grow'} >
-                                    {/* <section className={`absolute z-index-one circle box-shadow padding-0-5x grey lighten-4 self-middle left-50`}>
-                                            <div className={'grey-text text-darken-4 mt-1 mb-0 '}>
-                                                <div className={'font-2x'}>{value.currencyShortName}</div>
-                                                <span className={'bolder font-2-5x word-wrap'}>{value.paymentPrice}</span>
-                                            </div>
-                                         </section> */}
-                                    <Card body outline
-                                          className={"small-border padding-1-5x card-shadow overflow"}>
-                                                <span className={`grey-text text-darken-3 font-1-5x uppercase ribbon pl-2 pr-2`}>
-                                                   type
-                                                </span>
+                       <ListGroup className={'margin-top-2x'}>
+                           <ListGroupItem className={'grey lighten-5'}>
+                               <ListGroupItemHeading id="cis" className={'pt-1 black-text pointer font-1-8x'}>
+                                   {/*<i className={'material-icons left font-1-8x mr-1 relative'}>credit_card</i>*/}
+                                   Driver Information
+                               </ListGroupItemHeading>
+                               <UncontrolledCollapse toggler="#cis" isOpen={'true'}>
+                                   <ListGroup className={'mt-3 card-shadow mb-1'}>
+                                       <ListGroupItem className={'padding-2x'}>
+                                           <Row>
+                                               <Col sm={6}>
+                                                   <FormGroup>
+                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Name</Label>
+                                                       <i id="py-is" className={'material-icons font-1-5x top-0-2x relative ml-2'}>info_outline</i>
+                                                       <Input type="text" name="courseName"
+                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.productDetails.courseName) && 'border-red-x')}`}*/
+                                                       />
+                                                       {/*<UncontrolledTooltip placement="right" target="py-is">
+                                                           Driver name should be the purchased course or service
+                                                       </UncontrolledTooltip>*/}
+                                                   </FormGroup>
+                                               </Col>
+                                               <Col sm={6}>
+                                                   <FormGroup>
+                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Experience</Label>
+                                                       <CustomInput type="select" id="exampleCustomSelect" name="taxType"
+                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.paymentRequested.taxType) && 'border-red-x')}`}*/
+                                                       >
+                                                           <option value="">Year Of Experience</option>
+                                                           <option value="2">2</option>
+                                                           <option value="3">3</option>
+                                                       </CustomInput>
 
-                                        <CardTitle className="mt-3 mb-2">
-                                                <span className={'grey-text text-darken-3 bolder font-2x'}>
-                                                    text
-                                                </span>
-                                            <span className={`ml-2 mr-2 grey-text text-darken-2`}>|</span>
-                                            <span
-                                                className={'grey-text text-darken-3 bolder font-2x'}>
-                                                    text
-                                                </span>
-                                        </CardTitle>
-                                        <Button
-                                            color={'white'}
+                                                   </FormGroup>
+                                               </Col>
+                                           </Row>
+                                           <FormGroup>
+                                               <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Driver description</Label>
+                                               <Input type='textarea' name="courseDescription"
+                                                   /* className={`${state.validationTest && (!Validation.stringValidate(state.billing.productDetails.courseDescription) && 'border-red-x')}`}*/
+                                               />
+                                           </FormGroup>
 
-                                            className={`top-x right-x absolute ripple padding-0-2x`}
-                                            style={{lineHeight: "1px"}}>
-                                            <img src="../../static/Icons/edit.svg"
-                                                 width="18"/>
-                                        </Button>
+                                           <Row className={'mt-4'}>
+                                               <Col sm={4}>
+                                                   <FormGroup>
+                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Phone Number</Label>
+                                                       <Input type='number' name="licence"
+                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.paymentRequested.amount) && 'border-red-x')}`}*/
+                                                       />
+                                                   </FormGroup>
+                                               </Col>
+                                               <Col sm={4}>
+                                                   <FormGroup>
+                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Email</Label>
+                                                       <Input type='email' name="email"
+                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.paymentRequested.amount) && 'border-red-x')}`}*/
+                                                       />
+                                                   </FormGroup>
+                                               </Col>
+                                               <Col sm={4}>
+                                                   <FormGroup>
+                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Licence Number</Label>
+                                                       <Input type='text' name="licence"
+                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.paymentRequested.amount) && 'border-red-x')}`}*/
+                                                       />
+                                                   </FormGroup>
+                                               </Col>
+                                           </Row>
+                                           <Row className={'mt-2'}>
+                                               <Col sm={12}>
+                                                   <FormGroup>
+                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Full Address</Label>
+                                                       <Input type='textarea' name="otherDetails"
+                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.paymentRequested.otherDetails) && 'border-red-x')}`}*/
+                                                       />
+                                                   </FormGroup>
+                                               </Col>
+                                           </Row>
+                                       </ListGroupItem>
+                                   </ListGroup>
 
-                                        <CardText className={`mt-1 mb-1 ripple`} style={{lineHeight: "3px"}}>
+                                   {/*<Button color="link" className={'mt-4'}>
+                                    <i className={'material-icons left font-1-8x mr-1 top-0-2x relative underline'}>add_circle_outline</i>
+                                    Add another Payment</Button>*/}
+                               </UncontrolledCollapse>
+                           </ListGroupItem>
+                       </ListGroup>
 
-
-                                                    <i class="material-icons yellow-text text-accent-4 pointer font-4x animated-slow zoomIn"
-                                                       title="Featured">star</i>
-
-                                                    /*<i class="material-icons grey-text text-accent-4 pointer font-3x  animated zoomIn"
-                                                       title="Mark as Feature">star_border</i>*/
-                                        </CardText>
-
-                                        <CardText className={'grey-text text-darken-4 mt-1 mb-0 '}>
-                                            <span className={'font-2-5x bold'}>symbol</span>
-                                            <span className={'bolder font-2-5x word-wrap margin-left-0-2x'}>text</span>
-                                        </CardText>
-
-                                        <CardText className={'mt-1 mb-2 text-center'}style={{maxWidth: 330}}>
-                                            <div
-                                                className={'grey-text text-darken-3 font-1-8x'}>text</div>
-                                            {/*<div
-                                                        className={'grey-text text-darken-5 font-1-5x mt-2'}>{value.paymentDescription}</div>*/}
-                                        </CardText>
-                                        {/* <CardText className={'mt-2 mb-0'}>
-                                                    <Badge
-                                                        className={"lighter pt-2 pb-2 ml-2 font-1-2x capitalize ui-success pointer"}
-                                                        onClick={parentThis.updatePaymentStatus.bind(parentThis , index)}
-                                                        style={{width: 60}} pill> {value.paymentStatus}
-                                                    </Badge>
-                                                </CardText> */}
-                                        <hr />
-                                    </Card>
+                       <Row>
+                           {/*<Col sm={{ size: 2, offset: 8 }}>
+                            <Button className={'brand-primary capitalize float-right mt-4'}
+                                    onClick={parentThis.invoicePreviewToggle.bind(parentThis)}>
+                                Preview
+                            </Button>
+                        </Col>*/}
 
 
 
-                                </Col>
-                            )
-                        }
+                           <Col sm={{ size: 3, offset: 9 }}>
+                               <Button className="float-right brand-primary capitalize text-center mt-4 mr-0 flex"
+                               >
+
+                                   Save
+                               </Button>
+                           </Col>
+
+                       </Row>
+
+                   </div>
+
+                   <div className="jumbotron" style={{backgroundColor: '#e1e1d0'}}>
+
+                       <ListGroup className={'padding-2x thin-border'}>
+                           {[...Array(3)].map((x, i) =>
+                               <ListGroup className={'mb-4'} key={i}>
+                                   <ListGroupItemHeading className={'font-1-2x text-italic mb-3'}> Added 3 Days Ago</ListGroupItemHeading>
+                                   {[...Array(3)].map((x, i) =>
+                                       <ListGroup key={i}>
+
+                                           <ListGroupItem className={'card-shadow mb-2 padding-top-2x padding-left-3x padding-right-3x padding-bottom-x hvr-underline-reveal'} key={i}>
+                                               <div className="ribbon__item">
+                                        <span className={'white-text bold font-x uppercase text-center ui-success'}>
+                                        cheque
+                                        </span>
+                                               </div>
+                                               <ListGroupItemHeading className={'bolder font-1-5x relative mb-0'} style={{top:-10}}>
+                                                   <Badge color="light" className={'pt-2 pl-2 pr-4 pb-2 font-1-2x thin-border-dashed left-align'}>
+                                                       Cab Number
+                                                   </Badge>
+                                               </ListGroupItemHeading>
+                                               <ListGroupItemHeading className={'bolder font-2x float-left'}>
+                                                   DriverName
+                                                   <i id={"pr__contact-"+i} className={'material-icons grey-text text-darken-2 font-1-8x top-0-2x left-0-5x relative'}>
+                                                       info_outline
+                                                   </i>
+
+                                                   <UncontrolledTooltip placement="right" target={"pr__contact-"+i}>
+                                            <span className={'grid right left-align padding-0-5x'}>
+                                                <b>Address : </b>
+                                                <label className={'mt-1'}>
+                                                    PO Box 1964 Cupertino
+                                                    Cupertino, Pin-95015<br/>
+                                                    California ,United States
+                                                </label>
+                                                <b>Contact : </b>
+                                                <label className={'mt-1'}>
+                                                    debajit@collegify.com
+                                                    <br/>+91 5478965412
+                                                </label>
+                                            </span>
+                                                   </UncontrolledTooltip>
+                                               </ListGroupItemHeading>
+
+                                               <Button className={'pt-0 pb-0 pl-1 pr-1 relative float-right right-0-5x left-x'} style={{top: "-7px"}} color="link">
+                                                   {/*<i id={"pr__share-"+i} className={'material-icons relative top-0-2x font-2x'}>share</i>*/}
+                                                   <img width={25} id={"pr__edit-"+i} className={'padding-0-2x'}
+                                                        src={"../../static/images/edit.png"}/>
+                                                   <UncontrolledTooltip placement="top" target={"pr__edit-"+i}>
+                                                       Edit
+                                                   </UncontrolledTooltip>
+                                               </Button>{' '}
+
+                                               <Button id="UncontrolledPopover" className={'pt-0 pb-0 pl-1 pr-1 relative float-right right-0-5x left-x'} style={{top: "-7px"}} color="link">
+                                                   {/*<i id={"pr__share-"+i} className={'material-icons relative top-0-2x font-2x'}>share</i>*/}
+                                                   <img width={25} id={"pr__share-"+i} className={'padding-0-2x'}
+                                                        src={"../../static/images/007-share.png"}/>
+                                                   <UncontrolledTooltip placement="top" target={"pr__share-"+i}>
+                                                       Share via Email
+                                                   </UncontrolledTooltip>
+
+                                               </Button>
+
+                                               <UncontrolledPopover placement="bottom" className="no-border card-shadow" target="UncontrolledPopover">
+                                                   <PopoverHeader className={'capitalize'}>enter an email address</PopoverHeader>
+                                                   <PopoverBody>
+
+                                                       <Input type="text"/>
+                                                   </PopoverBody>
+                                               </UncontrolledPopover>
+
+                                               <Button className={'pt-0 pb-0 pl-1 pr-1 relative float-right right-0-5x left-x'}  style={{top: "-7px"}} color="link">
+                                                   {/*<i id={"pr__download-"+i} className={'material-icons relative top-0-2x font-2x'}>cloud_download</i>*/}
+                                                   <img id={"pr__download-"+i} width={25} className={'padding-0-2x'}
+                                                        src={"/static/images/028-download.png"}/>
+
+                                               </Button>
+
+                                               <ListGroupItemText className={'mt-2 mb-2 clear'}>
+                                                   <Badge className={'pt-2 pl-0 pr-4 pb-2 transparent font-1-2x no-border black-text left-align'}>
+                                                       text <span className={'font-1-2x grey-text text-darken-4 light relative ml-0'}> <br/><br/>Paid on 30th January,2019</span>
+                                                   </Badge>
+                                               </ListGroupItemText>
+
+                                               <ListGroupItemText className={'mt-2 mb-0 font-1-2x grey-text text-darken-3'}>
+                                                   driver details &nbsp; <code>Licence Number</code>
+                                               </ListGroupItemText>
+
+                                               <Badge pill color={'light'} className={'float-right small-border padding-1-5x font-2x absolute right-2x'} style={{bottom: '25px'}}>
+                                                   USD 200000
+                                               </Badge>
+                                           </ListGroupItem>
+                                       </ListGroup>
+                                   )}
+                               </ListGroup>
+                           )}
+
+                       </ListGroup>
+                   </div>
 
 
-                    </Row>
-                </ListGroup>
 
 
-            </div>
+               </div>
+
+               {/*<div className="jumbotron jumbotron-fluid">
+
+
+               </div>*/}
+
+           </div>
 
         );
     }
