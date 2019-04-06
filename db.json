@@ -1,0 +1,161 @@
+{
+  "cab-details": [
+    {
+      "id": 1,
+      "imgSrc": "https://res.cloudinary.com/dhynscaxy/image/upload/v1549355809/one.png",
+      "carType": "Prime",
+      "budgetPlanPerHr": "40",
+      "cabTitle": "Swift Dezire",
+      "carNUmber": "WB13G 2787"
+    },
+    {
+      "id": 2,
+      "imgSrc": "../../static/images/two.png",
+      "carType": "sedan",
+      "budgetPlanPerHr": "80",
+      "cabTitle": "Swift",
+      "carNUmber": "WB16J 7827"
+    },
+    {
+      "id": 3,
+      "imgSrc": "../../static/images/three.png",
+      "carType": "Micro",
+      "budgetPlanPerHr": "25",
+      "cabTitle": "Tata Indica Vista",
+      "carNUmber": "WB17AB 8987"
+    },
+    {
+      "id": 4,
+      "imgSrc": "../../static/images/four.png",
+      "carType": "Mini",
+      "budgetPlanPerHr": "15",
+      "cabTitle": "Maruti Alto",
+      "carNUmber": "WB13AH 2645"
+    },
+    {
+      "id": 5,
+      "imgSrc": "../../static/images/five.png",
+      "carType": "Mini",
+      "budgetPlanPerHr": "15",
+      "cabTitle": "Maruti Alto",
+      "carNUmber": "WB13G 2661"
+    },
+    {
+      "id": 6,
+      "imgSrc": "../../static/images/two.png",
+      "carType": "sedan",
+      "budgetPlanPerHr": "80",
+      "cabTitle": "ingigo v2",
+      "carNUmber": "WB13JG 8671"
+    },
+    {
+      "id": 7,
+      "imgSrc": "https://res.cloudinary.com/dhynscaxy/image/upload/v1549355809/imageedit_1_4837153092.png",
+      "carType": "prime",
+      "budgetPlanPerHr": "40",
+      "cabTitle": "honda amaze",
+      "carNUmber": "WB83AG 2271"
+    }
+  ],
+  "booking-details": [
+    {
+      "cabId": 1,
+      "userEmail": "tamaghna@collegify.com",
+      "bookingDate": "2019-02-13",
+      "startDate": "2019-02-14",
+      "endDate": "2019-02-17",
+      "totalValue": 240,
+      "bookingId": "00ab12019-02-1400012342019-02-17",
+      "bookedOn": "2019-02-13",
+      "id": 1
+    },
+    {
+      "cabId": 4,
+      "userEmail": "tamaghna@collegify.com",
+      "bookingDate": "2019-02-13",
+      "startDate": "2019-02-14",
+      "endDate": "2019-02-17",
+      "totalValue": 240,
+      "bookingId": "00ab12019-02-1400012342019-02-17",
+      "bookedOn": "2019-02-13",
+      "id": 1
+    },
+    {
+      "cabId": 1,
+      "userEmail": "tamaghna@collegify.com",
+      "bookingDate": "2019-02-13",
+      "startDate": "2019-02-13",
+      "endDate": "2019-02-15",
+      "totalValue": 80,
+      "bookingId": "00ab12019-02-1300012342019-02-15",
+      "bookedOn": "2019-02-11",
+      "id": 2
+    },
+    {
+      "cabId": 7,
+      "userEmail": "tamaghna@collegify.com",
+      "bookingDate": "2019-02-14",
+      "startDate": "2019-02-15",
+      "endDate": "2019-02-16",
+      "totalValue": 40,
+      "bookingId": "00ab12019-02-1500012342019-02-16",
+      "bookedOn": "2019-02-14",
+      "id": 3
+    },
+    {
+      "cabId": 6,
+      "userEmail": "tamaghna@collegify.com",
+      "bookingDate": "2019-02-15",
+      "startDate": "2019-02-17",
+      "endDate": "2019-02-18",
+      "totalValue": 80,
+      "bookingId": "00ab12019-02-1700012342019-02-18",
+      "bookedOn": "2019-02-15",
+      "id": 4
+    },
+    {
+      "cabId": 6,
+      "userEmail": "tamaghna@collegify.com",
+      "bookingDate": "2019-02-15",
+      "startDate": "2019-02-17",
+      "endDate": "2019-02-18",
+      "totalValue": 80,
+      "bookingId": "00ab12019-02-1700012342019-02-18",
+      "bookedOn": "2019-02-15",
+      "id": 4
+    },
+    {
+      "cabId": 6,
+      "userEmail": "tamaghna@collegify.com",
+      "bookingDate": "2019-02-15",
+      "startDate": "2019-02-17",
+      "endDate": "2019-02-18",
+      "totalValue": 80,
+      "bookingId": "00ab12019-02-1700012342019-02-18",
+      "bookedOn": "2019-02-15",
+      "id": 4
+    },
+    {
+      "cabId": 5,
+      "userEmail": "tamaghna@collegify.com",
+      "bookingDate": "2019-02-18",
+      "startDate": "2019-02-18",
+      "endDate": "2019-02-22",
+      "totalValue": 60,
+      "bookingId": "00ab12019-02-1800012342019-02-22",
+      "bookedOn": "2019-02-18",
+      "id": 5
+    },
+    {
+      "cabId": 4,
+      "userEmail": "tamaghna@collegify.com",
+      "bookingDate": "2019-03-03",
+      "startDate": "2019-03-03",
+      "endDate": "2019-03-16",
+      "totalValue": 195,
+      "bookingId": "00ab12019-03-0300012342019-03-16",
+      "bookedOn": "2019-03-03",
+      "id": 6
+    }
+  ]
+}

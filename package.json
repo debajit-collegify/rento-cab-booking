@@ -1,0 +1,28 @@
+{
+  "name": "rento-next",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "next build && NODE_ENV=production node server.js",
+    "export": "npm run build && next export",
+    "test": "jest",
+    "json": "json-server db.json --watch --port 4010"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@zeit/next-css": "^1.0.1",
+    "axios": "^0.18.0",
+    "bootstrap": "^4.2.1",
+    "lodash": "^4.17.11",
+    "next": "^7.0.3",
+    "next-routes": "^1.4.2",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3",
+    "reactstrap": "^7.1.0"
+  }
+}
