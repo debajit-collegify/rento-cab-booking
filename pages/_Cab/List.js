@@ -252,13 +252,16 @@ class Index extends React.Component {
                 {/*Section of Individual cards*/}
 
                 {
-                    (this.state.cabList) ? (<Container className="margin-top-4x">
-                        <CardTitle className="font-4x lighter grey-text text-darken-2">Cab List</CardTitle>
+                    (this.state.cabList) ? (
+                        <div className="jumbotron bg-white">
+
+                    <div className="margin-top-2x jumbotron" style={{width: '75%' ,marginLeft: '10%'}}>
+                        <CardTitle className="font-4x lighter grey-text text-darken-2">List of Cabs</CardTitle><hr/>
                         <Row className="margin-top-2x">
                             {this.state.cabDetailsCopy.map((dynamicData, i) =>
-                                <Col key={i} sm="2"className="margin-bottom-2x animated fadeIn">  {/*hvr-grow*/}
+                                <Col key={i} sm="3"className="margin-bottom-2x animated fadeIn">  {/*hvr-grow*/}
 
-                                    <Card className="box-shadow" style={{width: '200px'}} >
+                                    <Card className="box-shadow" style={{width: '100%'}} >
                                         <span className="notify-badge badge">{dynamicData.carType}</span>
                                        <CardImg top width="100%" src={dynamicData.imgSrc} alt="Card image cap" />
                                         <CardBody>
@@ -291,11 +294,15 @@ class Index extends React.Component {
                             {/*closing modal*/}
                         </Row>
                         <button onClick={this.toggle}  className="my-circle-fixed fixed bottom-off right-7x"><i className = "material-icons">open_in_browser</i></button>
-                    </Container>) :
+                    </div>
+
+                        </div>
+
+                    ) :
 
                         (<div className="container">
 
-                            {/*Section of no Card found*/}
+                            {/*Section of No Card found*/}
 
 
                             <div className="col-sm-3 no-booking-heading-margin primary-color-text">
