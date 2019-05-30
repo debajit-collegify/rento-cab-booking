@@ -27,7 +27,7 @@ module.exports =
 
     .add({
         name: 'admin-section',
-        pattern: '/admin/config',
+        pattern: '/admin/config?action=_blank',
         page: '_Admin/MainBuilder'
     })
 

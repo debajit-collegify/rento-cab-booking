@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {
-    Container, Col, Form,
+    Container,Row, Col, Form,
     FormGroup, Label, Input,
-    Button,Card} from 'reactstrap';
+    Button,Card , Modal , ModalHeader, ModalBody, ModalFooter,
+    FormText} from 'reactstrap';
 import AuthHeader from '../../component/AuthHeader';
 import axios from 'axios';
 import {Link , Router} from '../../routes';
@@ -15,14 +16,25 @@ class Login extends Component {
         this.state ={
             email:'',
             password:'',
-            loginMsg: ''
+            loginMsg: '',
+            modal: false
         }
+        this.toggle = this.toggle.bind(this);
+    }
+
+    toggle() {
+        this.setState(prevState => ({
+            modal: !prevState.modal
+        }));
     }
 
     handelChange = (e)=> {
         const state = this.state;
         state[e.target.name] = e.target.value;
         this.setState(state);
+    }
+    signUp = () => {
+        this.toggle();
     }
 
     parseJwt = (token) => {
@@ -176,6 +188,11 @@ class Login extends Component {
                                         </FormGroup>
                                     </Col>
                                     <Col>
+                                        <span className="font-weight-light font-1-5x grey-text">Dont have Account?
+                                            <span className="font-weight-normal font-1-2x pointer underline"
+                                            onClick={this.signUp.bind(this)}>SignUp Here</span></span>
+                                    </Col>
+                                    <Col>
                                         <div className="padding-top-0-8x padding-bottom-2x">
                                             <button className="btn-primary hvr-float-shadow shadow font-1-5x  padding-1-5x full-width border-radius-10x">Authenticate</button>
                                         </div>
@@ -189,6 +206,98 @@ class Login extends Component {
 
                         {/*Section of login form END*/}
 
+                        {/*signUp section Design*/}
+
+                        <Modal backdrop="static" keyboard={false}
+                               isOpen={this.state.modal}
+                               toggle={this.toggle}
+                               className="fixed right-off top-off margin-top-off animated slideInRight" style={{minWidth:'50%'}}>
+                            <ModalHeader toggle={this.toggle}>User SignUp</ModalHeader>
+                            <ModalBody>
+                                <div className="container">
+                                    <Form>
+                                        <Row>
+                                            <Col sm={6}>
+
+                                                <FormGroup>
+                                                    <Label for="exampleFirstName">FirstName</Label>
+                                                    <Input type="text" name="firstName" id="examplefirstname" placeholder="FirstName" />
+                                                </FormGroup>
+                                            </Col>
+                                            <Col sm={6}>
+                                                <FormGroup>
+                                                    <Label for="examplePassword">LastName</Label>
+                                                    <Input type="text" name="lastName" id="exampleLastName" placeholder="LastName" />
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col sm={6}>
+
+                                                <FormGroup>
+                                                    <Label for="exampleemail">Email</Label>
+                                                    <Input type="email" name="email" id="emailexample" placeholder="EmailID" />
+                                                </FormGroup>
+                                            </Col>
+                                            <Col sm={6}>
+                                                <FormGroup>
+                                                    <Label for="examplePassword">password</Label>
+                                                    <Input type="password" name="password" id="examplepassword" placeholder="Password" />
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col sm={4}>
+                                                <FormGroup>
+                                                    <Label for="examplestate">State</Label>
+                                                    <Input type="text" name="state" id="emailState" placeholder="State" />
+                                                </FormGroup>
+                                            </Col>
+                                            <Col sm={4}>
+                                                <FormGroup>
+                                                    <Label for="examplePassword">City</Label>
+                                                    <Input type="text" name="city" id="exampleCity" placeholder="City" />
+                                                </FormGroup>
+                                            </Col>
+                                            <Col sm={4}>
+                                            <FormGroup>
+                                                <Label for="examplePin">Pin</Label>
+                                                <Input type="number" name="pin" id="examplePin" placeholder="Pincode" />
+                                            </FormGroup>
+                                        </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col sm={7}>
+                                                <FormGroup>
+                                                    <Label for="exampleAddress">Address</Label>
+                                                    <Input type="textarea" name="state" id="emailState" placeholder="Full Address" />
+                                                </FormGroup>
+                                            </Col>
+                                            <Col sm={2}>
+                                                <FormGroup check>
+                                                    <Label check>
+                                                    <Input type="checkbox" name="state" id="emailState" placeholder="Full Address" />
+                                                    Do you Know Driving?
+                                                    </Label>
+                                                </FormGroup>
+                                            </Col>
+                                            <Col sm={3}>
+                                                <FormGroup>
+                                                    <Label for="examplePin">Licence No</Label>
+                                                    <Input type="text" name="licenceNo" id="examplePin" placeholder="Licence Number" />
+                                                </FormGroup>
+                                            </Col>
+                                        </Row>
+                                    </Form>
+
+                                </div>
+
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="primary" onClick={this.toggle}>Save</Button>
+                                <Button color="secondary" onClick={this.toggle}>Cancel</Button>
+                            </ModalFooter>
+                        </Modal>
 
 
                     </div>
