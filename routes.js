@@ -6,6 +6,11 @@ module.exports =
             pattern: '/auth/login',
             page: '_Auth/Login'
         })
+        .add({
+            name: 'Login',
+            pattern: '/Login',
+            page: '_Auth/NewLogin'
+        })
 
         .add({
             name: 'cab-list',
