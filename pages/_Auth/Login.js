@@ -4,7 +4,7 @@ import {
     FormGroup, Label, Input,
     Button,Card , Modal , ModalHeader, ModalBody, ModalFooter,
     FormText} from 'reactstrap';
-import AuthHeader from '../../component/AuthHeader';
+// import AuthHeader from '../../component/AuthHeader';
 import axios from 'axios';
 import {Link , Router} from '../../routes';
 
