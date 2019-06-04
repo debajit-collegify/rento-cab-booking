@@ -127,7 +127,7 @@ class Welcome extends Component {
                                         </label>):
                                         (<label className="capitalize absolute font-1-5x bolder white-text margin-top-2x high-z-index right-3x">
                                             <i className="material-icons font-2-5x relative top-0-5x">lock_outline</i>
-                                            <Link route='auth'><a href="#">click to login</a></Link>
+                                            <Link route='Login'><a href="#">click to login</a></Link>
                                         </label>)
                                 }
 

@@ -163,7 +163,7 @@ class NewLogin extends Component {
 
     }
 
-    clearSigninFormData(){
+    clearSignInFormData(){
         this.setState({
             loginFormData: {
                 ...this.state.loginFormData,
@@ -171,7 +171,8 @@ class NewLogin extends Component {
                 password:''
             },
             validationTest: false,
-            loading: false
+            loading: false,
+            loginMsg: ''
         });
     }
 
@@ -181,20 +182,61 @@ class NewLogin extends Component {
                 ...this.state.loginFormData,
                 [e.target.name]: e.target.value
             },
-            validationTest: false
+            validationTestSignIn: false
         },() => {
             console.log(this.state.loginFormData);
         })
     }
 
+
+
     signIn = (e) => {
         const state = this.state;
         e.preventDefault();
         this.setState({
-            validationTest: true,
+            validationTestSignIn: true,
             loading: true
+        },() => {
+            if(this.state.validationTestSignIn && (!Validation.emailValidate(this.state.loginFormData.email))){
+                this.setState({loginMsg: 'Email ID not valid'})
+            }else{
+                this.setState({loginMsg: ''})
+            }
         });
-        console.log("signIn");
+
+        if(Validation.emailValidate(this.state.loginFormData.email) &&
+            Validation.stringValidate(this.state.loginFormData.password)){
+            console.log("validation complete");
+
+            var signInFromData = {
+                email: this.state.loginFormData.email,
+                password: this.state.loginFormData.password
+            }
+            axios.post('http://92c2c1ff.ngrok.io/api/auth/signin',signInFromData).then((response) => {
+                const res = response;
+                console.log(res);
+                if(res.status === 200 && res.statusText === "OK"){
+                    this.setState({loginMsg: '' , loading: false});
+                    localStorage.setItem('userKey', res.data.accessToken);
+                    /*let tokenData = Validation.parseJwt(localStorage.getItem('userKey'));
+                    console.log(tokenData);*/
+                    console.log("User login successfully");
+                    // this.clearSignInFormData();
+                    Router.pushRoute('cab-list');
+                    console.log("------------------");
+                }else{
+                    console.log("user login not successful");
+                    this.setState({loginMsg: 'Email ID or password Invalid',loading: false});
+                }
+
+            }).catch((error) => {
+                console.log("Inside catch block login user" + error);
+                this.setState({loginMsg: 'Email ID or password Invalid',loading: false});
+            });
+        }
+
+
+
     }
 
     render() {
@@ -204,13 +246,24 @@ class NewLogin extends Component {
                 <Form method='post' style={{width:'320px',margin:'0px'}}>
                     <div style={{animation: 'zoomin 3s', transition:"all .3s"}}>
 
-                           {/* <div className="alert alert-danger alert-error text-center">
-                                <span className="badge badge-pill badge-danger">Error </span>
+                        {
+                            this.state.loginMsg !=='' &&
+                            <div className="alert alert-danger alert-error text-center">
+                                {
+                                    this.state.loginMsg === 'Email ID not valid' &&
+                                    <span className="badge badge-pill badge-danger">{this.state.loginMsg}</span>
+                                }
+                                {
+                                    this.state.loginMsg === 'Email ID or password Invalid' &&
+                                    <span className="badge badge-pill badge-danger">{this.state.loginMsg}</span>
+                                }
+
 
                             </div>
+                        }
 
 
-                                    <div className="alert alert-success alert-success text-center">
+                                    {/*<div className="alert alert-success alert-success text-center">
                                         <span className="badge badge-pill badge-success">Success </span>
 
                                     </div>*/}
@@ -224,19 +277,22 @@ class NewLogin extends Component {
                                             <input type="text" name="email"
                                                    placeholder="User Email"
                                                    value={this.state.loginFormData.email}
-                                                   className={`form-control ${this.state.validationTestSignIn && (!Validation.emailValidate(this.state.loginFormData.email) && 'error')}`}
+                                                   className="form-control"
+                                                   className={`form-control ${this.state.validationTestSignIn && (!Validation.stringValidate(this.state.loginFormData.email) && 'error-bottom-outline')}`}
                                                    onChange={this.getSignInFormValue.bind(this)}/>
                                         </div>
                                         <div className="form-group">
                                             <input type="password" name="password"
                                                    value={this.state.loginFormData.password}
-                                                   className={`form-control ${this.state.validationTestSignIn && (!Validation.stringValidate(this.state.loginFormData.password) && 'bounce')}`}
+                                                   className="form-control"
+                                                   className={`form-control ${this.state.validationTestSignIn && (!Validation.stringValidate(this.state.loginFormData.password) && 'error-bottom-outline')}`}
                                                    onChange={this.getSignInFormValue.bind(this)}
                                                    placeholder="Password"/>
                                         </div>
                                         <div className="form-group">
                                             <button className="btn btn-outline-primary active btn-block btn-lg" data-bs-hover-animate="shake" id="waitMe_ex"
                                             onClick={this.signIn.bind(this)}
+                                                    disabled={this.state.loading}
                                             >Log In</button>
                                         </div>
                                         <a className="forgot">Dont have Account? <span className="primary"
