@@ -42,7 +42,8 @@ class NewLogin extends Component {
     componentDidMount() {
           console.log(this.props.router.query.action);
           if(localStorage.getItem('userKey')){
-              Router.pushRoute('/cab/list');
+              // Router.pushRoute('cab-list');
+              Router.push({ pathname: '/cabList' })
           }
     }
 
@@ -228,7 +229,8 @@ class NewLogin extends Component {
                     console.log(tokenData);*/
                     console.log("User login successfully");
                     this.clearSignInFormData();
-                    Router.pushRoute('/cab/list');
+                    // Router.pushRoute('cab-list');
+                    Router.push({ pathname: '/cabList' })
                     console.log("------------------");
                 }else{
                     console.log("user login not successful");

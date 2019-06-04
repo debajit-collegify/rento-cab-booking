@@ -24,7 +24,8 @@ class NewLogin extends Component {
     componentDidMount() {
         console.log(this.props.router.query.action);
         if(localStorage.getItem('adminKey')){
-            Router.pushRoute('/admin/config');
+            // Router.pushRoute('/admin/config');
+            Router.push({ pathname: '/adminConfig' })
         }
     }
 
@@ -88,7 +89,9 @@ class NewLogin extends Component {
                     localStorage.setItem('adminKey', res.data.accessToken);
                     console.log("Admin login successfully");
                     this.clearSignInFormData();
-                    Router.pushRoute('/admin/config');
+                    console.log(Router);
+                    // Router.pushRoute('/adminConfig');
+                    Router.push({ pathname: '/adminConfig' })
                     console.log("------------------");
                 }else{
                     console.log("Admin login not successful");

@@ -14,7 +14,7 @@ module.exports =
 
         .add({
             name: 'cab-list',
-            pattern: '"/cab/list"',
+            pattern: `/cabList`,
             page: '_Cab/List'
         })
 
@@ -32,7 +32,7 @@ module.exports =
 
     .add({
         name: 'admin-section',
-        pattern: '"/admin/config"',
+        pattern: `/adminConfig`,
         page: '_Admin/MainBuilder'
     })
 

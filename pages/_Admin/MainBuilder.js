@@ -20,13 +20,17 @@ class MainBuilder extends Component {
     }
 
     componentDidMount() {
-        const parentThis = this;
-
+        if(localStorage.getItem('adminKey')){
+            // Router.pushRoute('/admin/config');
+            // Router.push({ pathname: '/adminConfig' })
+        }else{
+            Router.push({ pathname: '/admin/Login' })
+        }
     }
 
     currentConfiguration = (param) => {
         const parentThis = this;
-        Router.pushRoute(`/admin/config?action=${param}`).then(() =>{
+        Router.pushRoute(`/adminConfig?action=${param}`).then(() =>{
             parentThis.state.currentConfiguration = param;
             parentThis.setState(this.state);
         });

@@ -30,7 +30,8 @@ import {
     from 'reactstrap';
 
 import _ from 'lodash';
-
+import {Router} from "../../routes";
+import FileUpload from "../../component/FileUpload";
 
 
 class CabDetails extends React.Component {
@@ -40,6 +41,15 @@ class CabDetails extends React.Component {
             variable: {
                 loader: false,
                 showForm: false
+            },
+            formData: {
+                regno: '',
+                company: '',
+                model: '',
+                type: '',
+                state: '',
+                district: '',
+                postalcode: ''
             }
 
         };
@@ -51,12 +61,6 @@ class CabDetails extends React.Component {
     }*/
 
 
-
-
-    /*componentDidMount() {
-
-
-    }*/
     addNew = () => {
         const parentThis = this;
         const state = parentThis.state;
@@ -150,30 +154,11 @@ class CabDetails extends React.Component {
                                                </Col>
                                            </Row>
 
-                                           {/*<Row className={'mt-6'}>
+                                           <Row className={'mt-6'}>
                                                <Col sm={6}>
-                                                   <FormGroup>
-                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>mobile number</Label>
-                                                       <Input type="text" name="mobile"
-                                                           className={`${state.validationTest && (!Validation.stringValidate(state.billing.userDetails.mobile) && 'border-red-x')}`}
-                                                       />
-                                                   </FormGroup>
+                                                    <FileUpload />
                                                </Col>
-                                                <Col sm={4}>
-                                                <FormGroup>
-                                                    <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>alternative number</Label>
-                                                    <Input />
-                                                </FormGroup>
-                                            </Col>
-                                               <Col sm={6} className="float-right">
-                                                   <FormGroup>
-                                                       <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>email address</Label>
-                                                       <Input type="text" name="email"
-                                                           className={`${state.validationTest && (!Validation.stringValidate(state.billing.userDetails.email) && 'border-red-x')}`}
-                                                       />
-                                                   </FormGroup>
-                                               </Col>
-                                           </Row>*/}
+                                           </Row>
                                        </ListGroupItem>
                                    </ListGroup>
                                </UncontrolledCollapse>
@@ -301,11 +286,6 @@ class CabDetails extends React.Component {
 
 
                </div>
-
-               {/*<div className="jumbotron jumbotron-fluid">
-
-
-               </div>*/}
 
            </div>
 
