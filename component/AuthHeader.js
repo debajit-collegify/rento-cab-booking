@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {Link , Router} from '../routes';
 import { Row, Badge, ListGroup, ListGroupItem, Collapse, Navbar, NavbarToggler,  NavbarBrand, Nav, NavItem, NavLink, UncontrolledDropdown,  DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import Header from '../_Layout/Header'
+import Validation from "../pages/Validation";
 
 class Index extends React.Component {
     constructor(props){
@@ -13,33 +14,57 @@ class Index extends React.Component {
 
     }
 
-    parseJwt = (token) => {
-        var base64Url = token.split('.')[1];
-        var base64 = base64Url.replace('-', '+').replace('_', '/');
-        return JSON.parse(atob(base64));
-    }
-
     componentDidMount() {
 
-        if(localStorage.getItem('userKey')){
+        if (localStorage.getItem('userKey')) {
 
-            let tokenData = this.parseJwt(localStorage.getItem('userKey'));
-            let firstName = tokenData.firstName;
-            let lastName = tokenData.lastName;
-            let name = 'Hi ,' + firstName + '  '+ lastName;
+            let tokenData = Validation.parseJwt(localStorage.getItem('userKey'));
+            console.log(tokenData.user.firstname +' '+ tokenData.user.lastname);
+            let name = 'Hi ,' + tokenData.user.firstname +' '+ tokenData.user.lastname;
+
+
             if(tokenData){
                 this.setState({isLogin : true , userName : name});
 
+            }else{
+                this.setState({isLogin : false , userName : ''});
             }
-        }else{
-            this.setState({isLogin : false , userName : ''});
-        }
 
+
+        }
+        if (localStorage.getItem('adminKey')) {
+
+            let tokenData = Validation.parseJwt(localStorage.getItem('adminKey'));
+            console.log(tokenData.admin.name);
+            let name = 'Hi Admin ,' + tokenData.admin.name;
+
+            if(localStorage.getItem('userKey')){
+                localStorage.removeItem('userKey');
+                if(tokenData){
+                    this.setState({isLogin : true , userName : name});
+
+                }else{
+                    this.setState({isLogin : false , userName : ''});
+                }
+
+            }else{
+                if(tokenData){
+                    this.setState({isLogin : true , userName : name});
+
+                }else{
+                    this.setState({isLogin : false , userName : ''});
+                }
+            }
+
+
+
+        }
 
     }
     logout = () => {
         console.log("%c logout working","color:red; font-size:30px;");
-        //localStorage.removeItem('userKey');
+        localStorage.removeItem('userKey');
+        localStorage.removeItem('adminKey');
         localStorage.clear();
     }
     goToMyBooking = () => {
@@ -70,8 +95,8 @@ class Index extends React.Component {
                                 <DropdownItem>
                                     {
                                         (this.state.isLogin)?
-                                            (<Link route='auth'><a onClick={this.logout.bind(this)} href="#">Logout</a></Link>):
-                                            (<Link route='auth'><a href="#">Login</a></Link>)
+                                            (<Link route='welcome-cab'><a onClick={this.logout.bind(this)} href="#">Logout</a></Link>):
+                                            (<Link route='Login'><a href="#">Login</a></Link>)
                                     }
 
 
@@ -82,9 +107,9 @@ class Index extends React.Component {
                                     </a>
                                 </DropdownItem>
                                 <DropdownItem divider />
-                                <DropdownItem>
+                                {/*<DropdownItem>
                                     <Link route='cab-list'><a href="#">Cab List</a></Link>
-                                </DropdownItem>
+                                </DropdownItem>*/}
                             </DropdownMenu>
                         </UncontrolledDropdown>
 
@@ -93,7 +118,7 @@ class Index extends React.Component {
                     {/* Design show UserName When Login*/}
 
                     <ListGroupItem className="transparent float-right no-border white-text">
-                        <span className="float-right margin-top-2x margin-right-3x font-weight-lighter font-1-8x">{this.state.userName}</span>
+                        <span className="float-right margin-top-2x  font-weight-lighter font-1-8x">{this.state.userName}</span>
                     </ListGroupItem>
                 </ListGroup>
             </Row>

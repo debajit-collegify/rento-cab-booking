@@ -2,9 +2,9 @@ const routes = require('next-routes');
 module.exports =
     routes()
         .add({
-            name: 'auth',
-            pattern: '/auth/login',
-            page: '_Auth/Login'
+            name: 'admin-Login',
+            pattern: '/admin/Login',
+            page: '_Auth/NewAdminLogin'
         })
         .add({
             name: 'Login',
@@ -14,7 +14,7 @@ module.exports =
 
         .add({
             name: 'cab-list',
-            pattern: '/cab/list',
+            pattern: '"/cab/list"',
             page: '_Cab/List'
         })
 
@@ -32,7 +32,7 @@ module.exports =
 
     .add({
         name: 'admin-section',
-        pattern: '/admin/config',
+        pattern: '"/admin/config"',
         page: '_Admin/MainBuilder'
     })
 

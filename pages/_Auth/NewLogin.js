@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import Layout from '../../component/Layout'
 import {Button, Col, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row} from "reactstrap";
 import axios from 'axios';
-import {Link , Router} from '../../routes';
+import {Router} from "../../routes";
 import { withRouter } from 'next/router';
 import Validation from "../Validation";
 
@@ -40,7 +40,10 @@ class NewLogin extends Component {
     }
 
     componentDidMount() {
-         console.log(this.props.router.query.action);
+          console.log(this.props.router.query.action);
+          if(localStorage.getItem('userKey')){
+              Router.pushRoute('/cab/list');
+          }
     }
 
     toggle() {
@@ -138,7 +141,7 @@ class NewLogin extends Component {
                     license: this.state.signUpFromData.license,
                     driving: this.state.selfDriving
                 }
-                axios.post('http://92c2c1ff.ngrok.io/api/auth/signup',signUpFromData).then((response) => {
+                axios.post('http://f6781c6a.ngrok.io/api/auth/signup',signUpFromData).then((response) => {
                     const res = response;
                     console.log(res);
                     if(res.status === 200 && res.statusText === "OK"){
@@ -193,6 +196,8 @@ class NewLogin extends Component {
     signIn = (e) => {
         const state = this.state;
         e.preventDefault();
+        console.log("working");
+        // Router.pushRoute('cab/list');
         this.setState({
             validationTestSignIn: true,
             loading: true
@@ -212,17 +217,18 @@ class NewLogin extends Component {
                 email: this.state.loginFormData.email,
                 password: this.state.loginFormData.password
             }
-            axios.post('http://92c2c1ff.ngrok.io/api/auth/signin',signInFromData).then((response) => {
+            axios.post('http://f6781c6a.ngrok.io/api/auth/signin',signInFromData).then((response) => {
                 const res = response;
                 console.log(res);
+                // Router.pushRoute('/cab/list');
                 if(res.status === 200 && res.statusText === "OK"){
                     this.setState({loginMsg: '' , loading: false});
                     localStorage.setItem('userKey', res.data.accessToken);
                     /*let tokenData = Validation.parseJwt(localStorage.getItem('userKey'));
                     console.log(tokenData);*/
                     console.log("User login successfully");
-                    // this.clearSignInFormData();
-                    Router.pushRoute('cab-list');
+                    this.clearSignInFormData();
+                    Router.pushRoute('/cab/list');
                     console.log("------------------");
                 }else{
                     console.log("user login not successful");
@@ -233,6 +239,9 @@ class NewLogin extends Component {
                 console.log("Inside catch block login user" + error);
                 this.setState({loginMsg: 'Email ID or password Invalid',loading: false});
             });
+        }else{
+            console.log("one or more required field are missing");
+            this.setState({loading: false});
         }
 
 
