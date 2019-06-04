@@ -20,7 +20,7 @@ class MyBookings extends Component {
             totalValue:[]
         }
 
-        this.getIndividualUserBooking = this.getIndividualUserBooking.bind(this);
+        // this.getIndividualUserBooking = this.getIndividualUserBooking.bind(this);
 
         /*For Alert Component*/
         this.onDismiss = this.onDismiss.bind(this);
@@ -30,13 +30,13 @@ class MyBookings extends Component {
         return {query}
     }
 
-    redirectToCabList = () =>{
+    /*redirectToCabList = () =>{
 
         Router.pushRoute('/cab/list');
-    }
+    }*/
 
 
-    getIndividualUserBooking(){
+    /*getIndividualUserBooking(){
 
         let userEmail = localStorage.getItem('userEmail');
 
@@ -45,7 +45,7 @@ class MyBookings extends Component {
             let data = response.data;
             //console.log(typeof(data));
 
-            /*If data is not blank object checking*/
+            /!*If data is not blank object checking*!/
 
             if(data !== {}){
 
@@ -83,7 +83,7 @@ class MyBookings extends Component {
                                 .value();
                             //console.log(result);
 
-                            /*_.forEach(result , (val,i)=>{
+                            /!*_.forEach(result , (val,i)=>{
 
                                 _.forEach(val.cabDetails, (value , index)=>{
                                     //console.log(value.cabId);
@@ -93,7 +93,7 @@ class MyBookings extends Component {
 
 
 
-                            });*/
+                            });*!/
 
 
                             this.setState({cabDetailsBookingPerUserKeyAsBookingDate : result});
@@ -115,7 +115,7 @@ class MyBookings extends Component {
         })
 
 
-        /*var data = [
+        /!*var data = [
             {
                 "name": "jim",
                 "color": "blue",
@@ -137,14 +137,14 @@ class MyBookings extends Component {
             .map(( color , details) => ({color ,  details }))
             .value();
 
-        console.log(res);*/
-        /*_.forEach(res.color , (val,i)=>{
+        console.log(res);*!/
+        /!*_.forEach(res.color , (val,i)=>{
 
                 console.log(val);
-        });*/
+        });*!/
 
 
-    }
+    }*/
 
     componentDidMount() {
 
@@ -152,11 +152,11 @@ class MyBookings extends Component {
             this.setState({status:true});
         }
 
-        this.getIndividualUserBooking();
+        // this.getIndividualUserBooking();
 
-        if(! localStorage.getItem('userKey')){
+        /*if(! localStorage.getItem('userKey')){
             Router.pushRoute('/cab/list');
-        }
+        }*/
     }
 
     onDismiss() {

@@ -4,14 +4,37 @@ import {Button, Col, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFoote
 import axios from 'axios';
 import {Link , Router} from '../../routes';
 import { withRouter } from 'next/router';
+import Validation from "../Validation";
+
+
 class NewLogin extends Component {
     constructor(props){
         super(props);
         this.state ={
-            email:'',
-            password:'',
+            loginFormData: {
+                email:'',
+                password:''
+            },
+            validationTestSignIn: false,
             loginMsg: '',
-            modal: false
+            loading: false,
+            selfDriving: false,
+            modal: false,
+            validationTest: false,
+            passwordChecking: true,
+            signUpFromData: {
+                firstName: '',
+                lastName: '',
+                phone: '',
+                email: '',
+                password: '',
+                rePassword: '',
+                state: '',
+                city: '',
+                pin: '',
+                address: '',
+                license: ''
+            }
         }
         this.toggle = this.toggle.bind(this);
     }
@@ -24,19 +47,164 @@ class NewLogin extends Component {
         this.setState(prevState => ({
             modal: !prevState.modal
         }));
+        this.clearSignUpFormdata();
     }
     signUp = () => {
         this.toggle();
+    }
+    confirmCheck = (e) => {
+        this.setState({selfDriving: !this.state.selfDriving},() => {
+
+            if(!this.state.selfDriving){
+                this.setState({
+                    signUpFromData: {
+                        ...this.state.signUpFromData,
+                        license: ''
+                    },
+                });
+            }
+        });
+    }
+    getFormValue = (e) => {
+        this.setState({
+            signUpFromData: {
+                ...this.state.signUpFromData,
+                [e.target.name]: e.target.value
+            },
+            validationTest: false
+        })
+
+    }
+
+    clearSignUpFormdata() {
+        this.setState({
+            signUpFromData: {
+                ...this.state.signUpFromData,
+                firstName: '',
+                lastName: '',
+                phone: '',
+                email: '',
+                password: '',
+                rePassword: '',
+                state: '',
+                city: '',
+                pin: '',
+                address: '',
+                license: ''
+            },
+            selfDriving: false,
+            validationTest: false,
+            passwordChecking: true,
+            loading: false
+        });
+    }
+    addUser = () => {
+        const state = this.state;
+        this.setState({
+            validationTest: true,
+            loading: true
+        });
+
+        if(this.state.signUpFromData.password !== '' && this.state.signUpFromData.rePassword !== ''){
+            if(this.state.signUpFromData.password === this.state.signUpFromData.rePassword){
+                this.setState({passwordChecking: true})
+            }else{
+                this.setState({passwordChecking: false})
+            }
+        }
+
+        if( Validation.stringValidate(state.signUpFromData.firstName) &&
+            Validation.stringValidate(state.signUpFromData.lastName) &&
+            Validation.mobileNumberValidate(state.signUpFromData.phone) &&
+            Validation.emailValidate(state.signUpFromData.email) &&
+            Validation.stringValidate(state.signUpFromData.password) &&
+            Validation.stringValidate(state.signUpFromData.rePassword) &&
+            Validation.stringValidate(state.signUpFromData.state) &&
+            Validation.stringValidate(state.signUpFromData.city) &&
+            Validation.positiveNumber(state.signUpFromData.pin) &&
+            Validation.stringValidate(state.signUpFromData.address) ){
+
+                console.log("with license");
+                var signUpFromData = {
+                    firstname: this.state.signUpFromData.firstName,
+                    lastname: this.state.signUpFromData.lastName,
+                    phone: this.state.signUpFromData.phone,
+                    email: this.state.signUpFromData.email,
+                    password: this.state.signUpFromData.password,
+                    state: this.state.signUpFromData.state,
+                    city: this.state.signUpFromData.city,
+                    pin: this.state.signUpFromData.pin,
+                    address: this.state.signUpFromData.address,
+                    license: this.state.signUpFromData.license,
+                    driving: this.state.selfDriving
+                }
+                axios.post('http://92c2c1ff.ngrok.io/api/auth/signup',signUpFromData).then((response) => {
+                    const res = response;
+                    console.log(res);
+                    if(res.status === 200 && res.statusText === "OK"){
+                        this.toggle();
+                        this.clearSignUpFormdata();
+                        console.log("User created successfully");
+                    }else{
+                        console.log("Data insertion not successful");
+                        this.clearSignUpFormdata();
+                    }
+
+                }).catch((error) => {
+                    console.log("Inside catch block add user" + error);
+                    this.clearSignUpFormdata();
+                });
+
+        }else{
+            console.log("one or more required field are missing");
+            this.setState({loading: false});
+        }
+
+
+    }
+
+    clearSigninFormData(){
+        this.setState({
+            loginFormData: {
+                ...this.state.loginFormData,
+                email:'',
+                password:''
+            },
+            validationTest: false,
+            loading: false
+        });
+    }
+
+    getSignInFormValue(e){
+        this.setState({
+            loginFormData: {
+                ...this.state.loginFormData,
+                [e.target.name]: e.target.value
+            },
+            validationTest: false
+        },() => {
+            console.log(this.state.loginFormData);
+        })
+    }
+
+    signIn = (e) => {
+        const state = this.state;
+        e.preventDefault();
+        this.setState({
+            validationTest: true,
+            loading: true
+        });
+        console.log("signIn");
     }
 
     render() {
         return (
             <Layout>
             <div className="login-dark">
-                <form method="post" action="/Login" style={{width:'320px',margin:'0px'}}>
+                <Form method='post' style={{width:'320px',margin:'0px'}}>
                     <div style={{animation: 'zoomin 3s', transition:"all .3s"}}>
 
-                            <div className="alert alert-danger alert-error text-center">
+                           {/* <div className="alert alert-danger alert-error text-center">
                                 <span className="badge badge-pill badge-danger">Error </span>
 
                             </div>
@@ -45,7 +213,7 @@ class NewLogin extends Component {
                                     <div className="alert alert-success alert-success text-center">
                                         <span className="badge badge-pill badge-success">Success </span>
 
-                                    </div>
+                                    </div>*/}
 
                                         <h2 className="sr-only">Login Form</h2>
                                         <div data-bs-hover-animate="pulse" className="illustration" >
@@ -53,77 +221,131 @@ class NewLogin extends Component {
                                             <img src="../static/Icons/man.png" alt="Logo" height="160px"/>
                                         </div>
                                         <div className="form-group">
-                                            <input className="form-control" type="text" name="username" placeholder="Username"/>
+                                            <input type="text" name="email"
+                                                   placeholder="User Email"
+                                                   value={this.state.loginFormData.email}
+                                                   className={`form-control ${this.state.validationTestSignIn && (!Validation.emailValidate(this.state.loginFormData.email) && 'error')}`}
+                                                   onChange={this.getSignInFormValue.bind(this)}/>
                                         </div>
                                         <div className="form-group">
-                                            <input className="form-control" type="password" name="password" placeholder="Password"/>
+                                            <input type="password" name="password"
+                                                   value={this.state.loginFormData.password}
+                                                   className={`form-control ${this.state.validationTestSignIn && (!Validation.stringValidate(this.state.loginFormData.password) && 'bounce')}`}
+                                                   onChange={this.getSignInFormValue.bind(this)}
+                                                   placeholder="Password"/>
                                         </div>
                                         <div className="form-group">
-                                            <button className="btn btn-outline-primary active btn-block btn-lg" type="submit" data-bs-hover-animate="shake" id="waitMe_ex">Log In</button>
+                                            <button className="btn btn-outline-primary active btn-block btn-lg" data-bs-hover-animate="shake" id="waitMe_ex"
+                                            onClick={this.signIn.bind(this)}
+                                            >Log In</button>
                                         </div>
                                         <a className="forgot">Dont have Account? <span className="primary"
                                         onClick={this.signUp.bind(this)}
                                         >Sign Up Today</span></a>
                     </div>
-                </form>
+                </Form>
             </div>
 
 
                 <Modal backdrop="static" keyboard={false}
                        isOpen={this.state.modal}
                        toggle={this.toggle}
-                       className="fixed right-off top-off margin-top-off animated slideInRight" style={{minWidth:'50%'}}>
+                       /*className="fixed right-off top-off margin-top-off animated slideInRight"*/ style={{minWidth:'50%'}}>
                     <ModalHeader toggle={this.toggle}>User SignUp</ModalHeader>
                     <ModalBody>
                         <div className="container">
                             <Form>
                                 <Row>
-                                    <Col sm={6}>
+                                    <Col sm={4}>
 
                                         <FormGroup>
                                             <Label for="exampleFirstName">FirstName</Label>
-                                            <Input type="text" name="firstName" id="examplefirstname" placeholder="FirstName" />
+                                            <Input type="text" name="firstName" id="examplefirstname"
+                                                   placeholder="FirstName"
+                                                   value={this.state.signUpFromData.firstName}
+                                                   className={`${this.state.validationTest && (!Validation.stringValidate(this.state.signUpFromData.firstName) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}
+                                            />
                                         </FormGroup>
                                     </Col>
-                                    <Col sm={6}>
+                                    <Col sm={4}>
                                         <FormGroup>
                                             <Label for="examplePassword">LastName</Label>
-                                            <Input type="text" name="lastName" id="exampleLastName" placeholder="LastName" />
+                                            <Input type="text" name="lastName" id="exampleLastName"
+                                                   placeholder="LastName"
+                                                   value={this.state.signUpFromData.lastName}
+                                                   className={`${this.state.validationTest && (!Validation.stringValidate(this.state.signUpFromData.lastName) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}/>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col sm={4}>
+                                        <FormGroup>
+                                            <Label for="examplePassword">Phone</Label>
+                                            <Input type="number" name="phone" id="examplephone"
+                                                   placeholder="Phone Number"
+                                                   value={this.state.signUpFromData.phone}
+                                                   className={`${this.state.validationTest && (!Validation.mobileNumberValidate(this.state.signUpFromData.phone) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}/>
                                         </FormGroup>
                                     </Col>
                                 </Row>
                                 <Row>
-                                    <Col sm={6}>
+                                    <Col sm={4}>
 
                                         <FormGroup>
                                             <Label for="exampleemail">Email</Label>
-                                            <Input type="email" name="email" id="emailexample" placeholder="EmailID" />
+                                            <Input type="email" name="email" id="emailexample"
+                                                   placeholder="EmailID"
+                                                   value={this.state.signUpFromData.email}
+                                                   className={`${this.state.validationTest && (!Validation.emailValidate(this.state.signUpFromData.email) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}/>
                                         </FormGroup>
                                     </Col>
-                                    <Col sm={6}>
+                                    <Col sm={4}>
                                         <FormGroup>
                                             <Label for="examplePassword">password</Label>
-                                            <Input type="password" name="password" id="examplepassword" placeholder="Password" />
+                                            <Input type="password" name="password" id="examplepassword" placeholder="Password"
+                                                   value={this.state.signUpFromData.password}
+                                                   className={`${this.state.validationTest && (!Validation.stringValidate(this.state.signUpFromData.password) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}/>
+                                        </FormGroup>
+                                    </Col>
+                                    <Col sm={4}>
+                                        <FormGroup>
+                                            <Label for="examplePassword">Confirm password</Label>
+                                            <Input type="password" name="rePassword" id="confirmPassword" placeholder="Confirm Password"
+                                                   value={this.state.signUpFromData.rePassword}
+                                                   className={`${this.state.validationTest && (!Validation.stringValidate(this.state.signUpFromData.rePassword) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}/>
                                         </FormGroup>
                                     </Col>
                                 </Row>
                                 <Row>
                                     <Col sm={4}>
                                         <FormGroup>
-                                            <Label for="examplestate">State</Label>
-                                            <Input type="text" name="state" id="emailState" placeholder="State" />
+                                            <Label for="state">State</Label>
+                                            <Input type="text" name="state" id="emailState" placeholder="State"
+                                                   value={this.state.signUpFromData.state}
+                                                   className={`${this.state.validationTest && (!Validation.stringValidate(this.state.signUpFromData.state) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}/>
                                         </FormGroup>
                                     </Col>
                                     <Col sm={4}>
                                         <FormGroup>
                                             <Label for="examplePassword">City</Label>
-                                            <Input type="text" name="city" id="exampleCity" placeholder="City" />
+                                            <Input type="text" name="city" id="exampleCity" placeholder="City"
+                                                   value={this.state.signUpFromData.city}
+                                                   className={`${this.state.validationTest && (!Validation.stringValidate(this.state.signUpFromData.city) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}/>
                                         </FormGroup>
                                     </Col>
                                     <Col sm={4}>
                                         <FormGroup>
-                                            <Label for="examplePin">Pin</Label>
-                                            <Input type="number" name="pin" id="examplePin" placeholder="Pincode" />
+                                            <Label for="Pin">Pin</Label>
+                                            <Input type="number" name="pin" id="examplePin" placeholder="Pincode"
+                                                   value={this.state.signUpFromData.pin}
+                                                   className={`${this.state.validationTest && (!Validation.stringValidate(this.state.signUpFromData.pin) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}/>
                                         </FormGroup>
                                     </Col>
                                 </Row>
@@ -131,22 +353,30 @@ class NewLogin extends Component {
                                     <Col sm={7}>
                                         <FormGroup>
                                             <Label for="exampleAddress">Address</Label>
-                                            <Input type="textarea" name="state" id="emailState" placeholder="Full Address" />
+                                            <Input type="textarea" name="address" id="idaddress" placeholder="Full Address"
+                                                   value={this.state.signUpFromData.address}
+                                                   className={`${this.state.validationTest && (!Validation.stringValidate(this.state.signUpFromData.address) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}/>
                                         </FormGroup>
                                     </Col>
                                     <Col sm={2}>
-                                        <FormGroup check>
-                                            <Label check>
-                                                <Input type="checkbox" name="state" id="emailState" placeholder="Full Address" />
+                                        <FormGroup check className="mt-4">
+                                                <Input type="checkbox" name="check" id="checkNow" onChange={this.confirmCheck.bind(this)} />
                                                 Do you Know Driving?
-                                            </Label>
                                         </FormGroup>
                                     </Col>
                                     <Col sm={3}>
-                                        <FormGroup>
-                                            <Label for="examplePin">Licence No</Label>
-                                            <Input type="text" name="licenceNo" id="examplePin" placeholder="Licence Number" />
-                                        </FormGroup>
+                                        {
+                                            this.state.selfDriving &&
+                                            <FormGroup>
+                                                <Label for="examplePin">Licence No</Label>
+                                                <Input type="text" name="license" id="license" placeholder="License Number"
+                                                       value={this.state.signUpFromData.license}
+                                                       className={`${this.state.validationTest && (!Validation.stringValidate(this.state.signUpFromData.license) && 'error')}`}
+                                                       onChange={this.getFormValue.bind(this)}/>
+                                            </FormGroup>
+                                        }
+
                                     </Col>
                                 </Row>
                             </Form>
@@ -155,7 +385,12 @@ class NewLogin extends Component {
 
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={this.toggle}>Save</Button>
+                        {
+                            !this.state.passwordChecking &&
+                            <span className="font-3x red-text absolute left-0-5x" style={{color: 'blue'}}>Password And Confirm Password are not Same</span>
+                        }
+
+                        <Button color="primary" disabled={this.state.loading} onClick={this.addUser.bind(this)}>Save</Button>
                         <Button color="secondary" onClick={this.toggle}>Cancel</Button>
                     </ModalFooter>
                 </Modal>
