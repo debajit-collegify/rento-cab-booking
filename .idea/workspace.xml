@@ -2,13 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="07431505-adb0-4993-933b-8a0b201f0fa5" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/component/FileUpload.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/component/FileUpload.js" beforeDir="false" afterPath="$PROJECT_DIR$/component/FileUpload.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/_Admin/CabDetails.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/_Admin/CabDetails.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pages/_Admin/MainBuilder.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/_Admin/MainBuilder.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/_Auth/NewAdminLogin.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/_Auth/NewAdminLogin.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pages/_Auth/NewLogin.js" beforeDir="false" afterPath="$PROJECT_DIR$/pages/_Auth/NewLogin.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes.js" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/.tmp/" />
     <ignored path="$PROJECT_DIR$/temp/" />
@@ -27,7 +25,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pages/_Admin/MainBuilder.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="345">
+            <state relative-caret-position="255">
               <caret line="25" column="14" selection-start-line="25" selection-start-column="14" selection-end-line="25" selection-end-column="14" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
@@ -36,11 +34,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/pages/_Admin/CabDetails.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1170">
-              <caret line="33" column="52" selection-start-line="33" selection-start-column="52" selection-end-line="33" selection-end-column="52" />
+            <state relative-caret-position="583">
+              <caret line="132" column="19" selection-start-line="120" selection-start-column="16" selection-end-line="132" selection-end-column="19" />
               <folding>
                 <element signature="e#0#39#0" expanded="true" />
               </folding>
@@ -48,11 +46,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/component/FileUpload.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="420">
-              <caret line="82" column="45" selection-start-line="82" selection-start-column="45" selection-end-line="82" selection-end-column="45" />
+            <state relative-caret-position="555">
+              <caret line="89" column="52" selection-start-line="89" selection-start-column="52" selection-end-line="89" selection-end-column="52" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -63,8 +61,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/pages/_Auth/NewAdminLogin.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="36" selection-start-line="4" selection-start-column="36" selection-end-line="4" selection-end-column="36" />
+            <state relative-caret-position="465">
+              <caret line="103" column="15" selection-start-line="103" selection-start-column="15" selection-end-line="103" selection-end-column="15" />
+              <folding>
+                <element signature="e#0#40#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -94,11 +95,11 @@
       <find>cabDetailsBookingPerUserKeyAsBookingDate</find>
       <find>full-</find>
       <find>e1e1d0</find>
-      <find>addNew</find>
       <find>login-dark</find>
       <find>border</find>
       <find>Router</find>
       <find>clearSignInFormData</find>
+      <find>addNew</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -137,11 +138,11 @@
         <option value="$PROJECT_DIR$/pages/_Cab/Welcome.js" />
         <option value="$PROJECT_DIR$/component/AuthHeader.js" />
         <option value="$PROJECT_DIR$/routes.js" />
-        <option value="$PROJECT_DIR$/pages/_Auth/NewLogin.js" />
-        <option value="$PROJECT_DIR$/pages/_Auth/NewAdminLogin.js" />
         <option value="$PROJECT_DIR$/pages/_Admin/MainBuilder.js" />
-        <option value="$PROJECT_DIR$/pages/_Admin/CabDetails.js" />
+        <option value="$PROJECT_DIR$/pages/_Auth/NewAdminLogin.js" />
+        <option value="$PROJECT_DIR$/pages/_Auth/NewLogin.js" />
         <option value="$PROJECT_DIR$/component/FileUpload.js" />
+        <option value="$PROJECT_DIR$/pages/_Admin/CabDetails.js" />
       </list>
     </option>
   </component>
@@ -320,18 +321,19 @@
       <workItem from="1559590695761" duration="2040000" />
       <workItem from="1559595356475" duration="537000" />
       <workItem from="1559631461199" duration="25752000" />
-      <workItem from="1559668857400" duration="15864000" />
+      <workItem from="1559668857400" duration="19032000" />
+      <workItem from="1559717488065" duration="4024000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="488978000" />
+    <option name="totallyTimeSpent" value="496170000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="67" y="25" width="1853" height="1055" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49559748" visible="true" weight="0.17432208" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49559748" visible="true" weight="0.1765357" />
       <window_info id="Structure" order="1" sideWeight="0.5044025" side_tool="true" weight="0.22006746" />
       <window_info id="npm" order="2" sideWeight="0.5044025" side_tool="true" weight="0.22006746" />
       <window_info id="Favorites" order="3" sideWeight="0.5044025" side_tool="true" weight="0.22006746" />
@@ -611,16 +613,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pages/_Auth/NewLogin.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2340">
-          <caret line="45" column="51" selection-start-line="45" selection-start-column="51" selection-end-line="45" selection-end-column="51" />
-          <folding>
-            <element signature="e#0#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pages/_Auth/Login.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="285">
@@ -632,16 +624,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="5" column="36" selection-start-line="5" selection-start-column="36" selection-end-line="5" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/pages/_Admin/MainBuilder.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
+        <state relative-caret-position="255">
           <caret line="25" column="14" selection-start-line="25" selection-start-column="14" selection-end-line="25" selection-end-column="14" />
           <folding>
             <element signature="e#0#39#0" expanded="true" />
@@ -649,29 +634,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pages/_Admin/CabDetails.js">
+    <entry file="file://$PROJECT_DIR$/routes.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1170">
-          <caret line="33" column="52" selection-start-line="33" selection-start-column="52" selection-end-line="33" selection-end-column="52" />
+        <state relative-caret-position="75">
+          <caret line="5" column="36" selection-start-line="5" selection-start-column="36" selection-end-line="5" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pages/_Auth/NewLogin.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="220" column="102" lean-forward="true" selection-start-line="220" selection-start-column="102" selection-end-line="220" selection-end-column="102" />
           <folding>
-            <element signature="e#0#39#0" expanded="true" />
+            <element signature="e#0#40#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/component/FileUpload.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="555">
+          <caret line="89" column="52" selection-start-line="89" selection-start-column="52" selection-end-line="89" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pages/_Auth/NewAdminLogin.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="60">
-          <caret line="4" column="36" selection-start-line="4" selection-start-column="36" selection-end-line="4" selection-end-column="36" />
+        <state relative-caret-position="465">
+          <caret line="103" column="15" selection-start-line="103" selection-start-column="15" selection-end-line="103" selection-end-column="15" />
+          <folding>
+            <element signature="e#0#40#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/component/FileUpload.js">
+    <entry file="file://$PROJECT_DIR$/pages/_Admin/CabDetails.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="82" column="45" selection-start-line="82" selection-start-column="45" selection-end-line="82" selection-end-column="45" />
+        <state relative-caret-position="583">
+          <caret line="132" column="19" selection-start-line="120" selection-start-column="16" selection-end-line="132" selection-end-column="19" />
           <folding>
-            <element signature="e#0#26#0" expanded="true" />
+            <element signature="e#0#39#0" expanded="true" />
           </folding>
         </state>
       </provider>

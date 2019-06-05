@@ -32,17 +32,16 @@ import {
 import _ from 'lodash';
 import {Router} from "../../routes";
 import FileUpload from "../../component/FileUpload";
+import Validation from "../Validation";
+import axios from "axios";
 
 
 class CabDetails extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            variable: {
-                loader: false,
-                showForm: false
-            },
-            formData: {
+            FormData: {
+                imageid: null,
                 regno: '',
                 company: '',
                 model: '',
@@ -50,31 +49,95 @@ class CabDetails extends React.Component {
                 state: '',
                 district: '',
                 postalcode: ''
-            }
+            },
+            validationTest: false,
+            loading: false
 
         };
 
     }
 
-    /*static getInitialProps({query}) {
-        return {query}
-    }*/
-
-
-    addNew = () => {
-        const parentThis = this;
-        const state = parentThis.state;
-        state.variable.showForm = true;
-        parentThis.setState(state);
+    clearFormData(){
+        this.setState({
+            FormData: {
+                ...this.state.FormData,
+                imageid: null,
+                regno: '',
+                company: '',
+                model: '',
+                type: '',
+                state: '',
+                district: '',
+                postalcode: ''
+            },
+            validationTest: false,
+            loading: false
+        });
     }
 
-    closeForm = () => {
-        const parentThis = this;
-        const state = parentThis.state;
-        state.variable.showForm = false;
-        parentThis.setState(state);
+    getFormValue(e){
+        this.setState({
+            FormData: {
+                ...this.state.FormData,
+                [e.target.name]: e.target.value
+            },
+            validationTest: false
+        },() => {
+            // console.log(this.state.FormData);
+        })
     }
+    addCarDetails(){
+        this.setState({
+            validationTest: true,
+            loading: true
+        })
 
+        if(Validation.stringValidate(this.state.FormData.regno) &&
+            Validation.stringValidate(this.state.FormData.company) &&
+            Validation.stringValidate(this.state.FormData.model) &&
+            Validation.stringValidate(this.state.FormData.type) &&
+            Validation.stringValidate(this.state.FormData.state) &&
+            Validation.stringValidate(this.state.FormData.district) &&
+            Validation.positiveNumber(this.state.FormData.postalcode)){
+
+            console.log("all validation Done");
+
+            var FormData = {
+                imageid: this.state.FormData.imageid,
+                regno: this.state.FormData.regno,
+                company: this.state.FormData.company,
+                model: this.state.FormData.model,
+                type: this.state.FormData.type,
+                state: this.state.FormData.state,
+                district: this.state.FormData.district,
+                postalcode: this.state.FormData.postalcode
+            }
+            console.log(FormData);
+            // http://localhost:4000/api/cab/create
+            axios.post('http://5793bf8a.ngrok.io/api/cab/create',FormData).then((response) => {
+                const res = response;
+                console.log(res);
+
+                /*if(res.status === 200 && res.statusText === "OK"){
+                    this.setState({loginMsg: '' , loading: false});
+                    localStorage.setItem('adminKey', res.data.accessToken);
+                    console.log("Admin login successfully");
+                    this.clearSignInFormData();
+                    console.log(Router);
+                    // Router.pushRoute('/adminConfig');
+                    Router.push({ pathname: '/adminConfig' })
+                    console.log("------------------");
+                }else{
+                    console.log("Admin login not successful");
+                    this.setState({loginMsg: 'Email ID or password Invalid',loading: false});
+                }*/
+
+            }).catch((error) => {
+                console.log("Inside catch block login Admin" + error);
+                this.setState({loginMsg: 'Email ID or password Invalid',loading: false});
+            });
+        }
+    }
 
 
     render() {
@@ -99,21 +162,28 @@ class CabDetails extends React.Component {
                                            <FormGroup className="inline">
                                                <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Registration Number</Label>
                                                <Input type="text"
-
-                                                      name="name" />
+                                                      name="regno"
+                                                      value={this.state.FormData.regno}
+                                                      className={`${this.state.validationTest && (!Validation.stringValidate(this.state.FormData.regno) && 'error')}`}
+                                                      onChange={this.getFormValue.bind(this)}/>
                                            </FormGroup>
 
                                            <FormGroup className={'mt-4'}>
                                                <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Make</Label>
-                                               <Input type='textarea' name="address1"
-                                               /> {/*invalid*/}
+                                               <Input type='textarea' name="company"
+                                                      value={this.state.FormData.company}
+                                                      className={`${this.state.validationTest && (!Validation.stringValidate(this.state.FormData.company) && 'error')}`}
+                                                      onChange={this.getFormValue.bind(this)}
+                                               />
                                                <FormFeedback>Oh noes! that name is already taken</FormFeedback>
-                                               <FormText>Example help text that remains unchanged.</FormText>
                                            </FormGroup>
 
                                            <FormGroup className={'mt-4'}>
                                                <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Model</Label>
-                                               <Input type={'textarea'}  name="address2"
+                                               <Input type={'textarea'}  name="model"
+                                                      value={this.state.FormData.model}
+                                                      className={`${this.state.validationTest && (!Validation.stringValidate(this.state.FormData.model) && 'error')}`}
+                                                      onChange={this.getFormValue.bind(this)}
 
                                                />
                                            </FormGroup>
@@ -122,8 +192,10 @@ class CabDetails extends React.Component {
                                                <Col sm={3}>
                                                    <FormGroup>
                                                        <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>Cab Type</Label>
-                                                       <Input type="text" name="state"
-                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.userDetails.state) && 'border-red-x')}`}*/
+                                                       <Input type="text" name="type"
+                                                              value={this.state.FormData.type}
+                                                              className={`${this.state.validationTest && (!Validation.stringValidate(this.state.FormData.type) && 'error')}`}
+                                                              onChange={this.getFormValue.bind(this)}
                                                        />
                                                    </FormGroup>
                                                </Col>
@@ -131,15 +203,19 @@ class CabDetails extends React.Component {
                                                    <FormGroup>
                                                        <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>State</Label>
                                                        <Input type="text" name="state"
-                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.userDetails.state) && 'border-red-x')}`}*/
+                                                              value={this.state.FormData.state}
+                                                              className={`${this.state.validationTest && (!Validation.stringValidate(this.state.FormData.state) && 'error')}`}
+                                                              onChange={this.getFormValue.bind(this)}
                                                        />
                                                    </FormGroup>
                                                </Col>
                                                <Col sm={3}>
                                                    <FormGroup>
                                                        <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>District</Label>
-                                                       <Input type="text" name="dist"
-                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.userDetails.dist) && 'border-red-x')}`}*/
+                                                       <Input type="text" name="district"
+                                                              value={this.state.FormData.district}
+                                                              className={`${this.state.validationTest && (!Validation.stringValidate(this.state.FormData.district) && 'error')}`}
+                                                              onChange={this.getFormValue.bind(this)}
 
                                                        />
                                                    </FormGroup>
@@ -147,8 +223,10 @@ class CabDetails extends React.Component {
                                                <Col sm={3}>
                                                    <FormGroup>
                                                        <Label className={'grey-text text-darken-2 font-1-2x capitalize'}>postal code</Label>
-                                                       <Input type="text" name="pin"
-                                                           /*className={`${state.validationTest && (!Validation.stringValidate(state.billing.userDetails.pin) && 'border-red-x')}`}*/
+                                                       <Input type="number" name="postalcode"
+                                                              value={this.state.FormData.postalcode}
+                                                              className={`${this.state.validationTest && (!Validation.positiveNumber(this.state.FormData.postalcode) && 'error')}`}
+                                                              onChange={this.getFormValue.bind(this)}
                                                        />
                                                    </FormGroup>
                                                </Col>
@@ -178,6 +256,7 @@ class CabDetails extends React.Component {
 
                            <Col sm={{ size: 3, offset: 9 }}>
                                <Button className="float-right brand-primary capitalize text-center mt-4 mr-0 flex"
+                                       onClick={this.addCarDetails.bind(this)}
                                >
 
                                    Save

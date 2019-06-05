@@ -70,17 +70,24 @@ export default class FileUpload extends React.Component {
                     });*/
 
                     let formData = new FormData();
+                    // formData.append('filters', JSON.stringify({ name: image.name, size : image.size, type: image.type, desc: 'constDesc' }));
+                    // formData.append('file', 'hello text');
+                    // formData.append('username', 'Chris');
                     formData.append('filters', JSON.stringify({ name: image.name, size : image.size, type: image.type, desc: 'constDesc' }));
                     formData.append('file', image);
-                    console.log(formData);
+
                     const config = {
                         headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
+                            'accept': "*/*",
+                            'Content-Type': 'multipart/form-data',
+                        },
                     };
-                    axios.post(`http://f6781c6a.ngrok.io/api/file/upload`, formData, config)
+                    /*for (var key of formData.entries()) {
+                        console.log(key[0] + ', ' + key[1])
+                    }*/
+                    axios.post(`http://5793bf8a.ngrok.io/api/file/upload`, {method: 'POST', body: formData})
                         .then(res => {
-                            console.log(res);
+                            console.log(res.json());
                         })
                         .catch(error => error)
                 }
