@@ -20,6 +20,8 @@ import {Link , Router} from '../../routes';
 import Validation from "../Validation";
 import {toast} from "react-toastify";
 import $ from "jquery";
+import swal from 'sweetalert';
+
 
 class ViewModal extends Component {
 
@@ -28,6 +30,7 @@ class ViewModal extends Component {
         this.toggle = this.toggle.bind(this);
         this.toggleBooking = this.toggleBooking.bind(this);
         this.dateDiffHere = this.dateDiffHere.bind(this);
+        this.toggleBook = this.toggleBook.bind(this);
 
 
         this.state = {
@@ -39,12 +42,21 @@ class ViewModal extends Component {
             tariffList: [],
             tariffId: '',
             selfDriving: false,
-            bookingType: ''
+            bookingType: '',
+            bookingModal: false,
+            modalBook: true,
+            finalizeBooking: []
         };
     }
 
     toggle() {
         this.setState({ collapse: !this.state.collapse , collapseBooking: false });
+    }
+    toggleBook(){
+        this.setState({
+            modalBook: true,
+            bookingModal: !this.state.bookingModal
+        });
     }
 
     toggleBooking() {
@@ -71,7 +83,7 @@ class ViewModal extends Component {
 
     getTariffByCabType(type){
 
-        axios.get('http://bb9f06da.ngrok.io/api/tarif/gettarifbycabtype/'+type).then((response) => {
+        axios.get('http://3820b782.ngrok.io/api/tarif/gettarifbycabtype/'+type).then((response) => {
             const res = response;
             console.log(res);
             if(res.status === 200 && res.statusText === "OK"){
@@ -129,13 +141,49 @@ class ViewModal extends Component {
         //console.log(this.state.totalValue);
         console.log(this.dateDiffHere(this.state.startDate, this.state.endDate));
         if(this.state.startDate !=='' && this.state.endDate !== '' && this.state.tariffId !== '' && this.state.bookingType !== ''){
-            toast.success("done")
+
             const bookingData = {
                 startDate: this.state.startDate,
                 endDate: this.state.endDate,
                 tariffId: this.state.tariffId,
                 selfDriving: this.state.selfDriving,
-                bookingType: this.state.bookingType
+                bookingType: this.state.bookingType,
+                cabid: this.props.data[this.props.indexNo].id
+            }
+            if(token){
+                // toast.success("done");
+
+                let tokenData = Validation.parseJwt(localStorage.getItem('userKey'));
+                console.log(tokenData);
+                bookingData.name =tokenData.user.firstname + ' ' + tokenData.user.lastname;
+                bookingData.phone =tokenData.user.phone;
+                bookingData.email =tokenData.user.email;
+                bookingData.license =tokenData.user.license;
+                bookingData.address =tokenData.user.address ;
+                bookingData.userid =tokenData.user.id ;
+                // console.log(bookingData);
+                this.setState({bookingModal: !this.state.bookingModal , finalizeBooking: bookingData}  , () => {
+                    console.log(this.state.finalizeBooking);
+                })
+            }else{
+                // toast.success("Login First To Continue Booking");
+                // Router.push({ pathname: '/Login' })
+                swal({
+                    title: "Login To Book First?",
+                    text: "If You Are Not Logged In Then Log In First To Continue Booking ",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            Router.push({ pathname: '/Login' })
+                        } else {
+                            swal("Dont Have Account SignUp First");
+                        }
+                    });
+
+
             }
         }else{
             toast.info("Select Date and tariff to proceed farther");
@@ -321,9 +369,6 @@ class ViewModal extends Component {
                                                     <div className="col-6">
 
 
-                                                        ----------------------
-
-
                                                         <table className="table">
                                                             <thead>
                                                             <tr>
@@ -386,6 +431,47 @@ class ViewModal extends Component {
 
                         </ModalFooter>*/}
                     </Modal>
+                    {
+                        this.state.bookingModal &&
+                        <Modal isOpen={this.state.modalBook} toggle={this.toggleBook} className="modal-size-booking-details">
+                            <ModalHeader>
+                                <div onClick={this.toggleBook} className="absolute right-2x top-0-5x margin-bottom-0-5x pointer">
+                                    <i className="material-icons">close</i>
+                                </div>
+                            </ModalHeader>
+                            <ModalBody className="modal-size-booking-details-body">
+                                <table className="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Address</th>
+                                        <th>Email</th>
+                                        <th>Day</th>
+                                        <th>SelfDriving</th>
+                                        <th>Phone</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
+                            </ModalBody>
+                            <ModalFooter>
+                                <Button color="primary" onClick={this.toggleBook}>Do Something</Button>{' '}
+                                <Button color="secondary" onClick={this.toggleBook}>Cancel</Button>
+                            </ModalFooter>
+                        </Modal>
+                    }
                 </div>
 
             </div>

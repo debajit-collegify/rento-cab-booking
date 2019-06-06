@@ -59,7 +59,7 @@ class Index extends React.Component {
 
     getAllCabDetails(){
 
-        axios.get('http://bb9f06da.ngrok.io/api/cab').then((response) => {
+        axios.get('http://3820b782.ngrok.io/api/cab').then((response) => {
             const res = response;
             console.log(res);
             if(res.status === 200 && res.statusText === "OK"){

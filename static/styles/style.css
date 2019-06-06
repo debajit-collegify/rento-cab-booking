@@ -144,6 +144,16 @@ body,html {
     height: 30rem;
     padding: 3rem;
 }
+.modal-size-booking-details{
+    min-width: 100%;
+    position: absolute;
+    top: 0;
+    margin-top: 0;
+}
+.modal-size-booking-details-body{
+    height: 30rem;
+    padding: 3rem;
+}
 .collap-img-style{
     width: 100px;
     height: 70px;
