@@ -142,7 +142,7 @@ class NewLogin extends Component {
                     license: this.state.signUpFromData.license,
                     driving: this.state.selfDriving
                 }
-                axios.post('http://9b552adb.ngrok.io/api/auth/signup',signUpFromData).then((response) => {
+                axios.post('http://4048746d.ngrok.io/api/auth/signup',signUpFromData).then((response) => {
                     const res = response;
                     console.log(res);
                     if(res.status === 200 && res.statusText === "OK"){
@@ -218,7 +218,7 @@ class NewLogin extends Component {
                 email: this.state.loginFormData.email,
                 password: this.state.loginFormData.password
             }
-            axios.post('http://3820b782.ngrok.io/api/auth/signin',signInFromData).then((response) => {
+            axios.post('http://4048746d.ngrok.io/api/auth/signin',signInFromData).then((response) => {
                 const res = response;
                 console.log(res);
                 // Router.pushRoute('/cab/list');

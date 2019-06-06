@@ -51,41 +51,21 @@ export default class FileUpload extends React.Component {
                     state.fileId = '';
                     state.uploadStatus = true;
                     parentThis.setState(state);
-                    // console.log(image, validExt, contentType);
-                    /*console.log(image);
-                    console.log(image.name);
-                    console.log(image.size);
-                    console.log(image.type);
-                    console.log('desc');*/
-                    /*this.putFile(image, image.name, image.size,image.type,'constDesc').then(res => {
-                        console.log(res);
-                        if (res.status === 'success' && res.code === '201') {
-                            state.fileId = res.data[0].id;
-                            state.filePath = res.data[0].filePath;
-                            state.uploadStatus = false;
-                            parentThis.setState(state);
-                        }
-                    }).catch(err => {
-                        console.log(err);
-                    });*/
 
                     let formData = new FormData();
-                    // formData.append('filters', JSON.stringify({ name: image.name, size : image.size, type: image.type, desc: 'constDesc' }));
-                    // formData.append('file', 'hello text');
-                    // formData.append('username', 'Chris');
                     formData.append('filters', JSON.stringify({ name: image.name, size : image.size, type: image.type, desc: 'constDesc' }));
                     formData.append('file', image);
 
-                    const config = {
+                    /*const config = {
                         headers: {
-                            'accept': "*/*",
+                            'accept': "*!/!*",
                             'Content-Type': 'multipart/form-data',
                         },
-                    };
+                    };*/
                     /*for (var key of formData.entries()) {
                         console.log(key[0] + ', ' + key[1])
                     }*/
-                    axios.post(`http://5793bf8a.ngrok.io/api/file/upload`, {method: 'POST', body: formData})
+                    axios.post(`http://4048746d.ngrok.io/api/file/upload`, formData)
                         .then(res => {
                             console.log(res.json());
                         })

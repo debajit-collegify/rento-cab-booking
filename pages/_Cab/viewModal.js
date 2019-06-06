@@ -13,7 +13,7 @@ import {
     Label,
     Input,
     FormGroup,
-    CustomInput, Col
+    CustomInput, Col,Row
 } from "reactstrap";
 import axios from 'axios';
 import {Link , Router} from '../../routes';
@@ -43,9 +43,13 @@ class ViewModal extends Component {
             tariffId: '',
             selfDriving: false,
             bookingType: '',
+            dayHourInput: '',
             bookingModal: false,
             modalBook: true,
-            finalizeBooking: []
+            finalizeBooking: [],
+            amount: '',
+            userLicense: '',
+            hour: ''
         };
     }
 
@@ -83,7 +87,7 @@ class ViewModal extends Component {
 
     getTariffByCabType(type){
 
-        axios.get('http://3820b782.ngrok.io/api/tarif/gettarifbycabtype/'+type).then((response) => {
+        axios.get('http://4048746d.ngrok.io/api/tarif/gettarifbycabtype/'+type).then((response) => {
             const res = response;
             console.log(res);
             if(res.status === 200 && res.statusText === "OK"){
@@ -127,10 +131,34 @@ class ViewModal extends Component {
             return false;
         }else{
             var endDate = e.target.value;
-            this.setState({ endDate : endDate});
+           let date =  this.dateDiffHere(this.state.startDate, endDate)
+            this.setState({ endDate : endDate , dayHourInput: date});
 
         }
 
+    }
+
+    getTarifDetailsById(id){
+
+        axios.get('http://4048746d.ngrok.io/api/tarif/gettarifbyid/'+id).then((response) => {
+            const res = response;
+            console.log(res);
+            if(res.status === 200 && res.statusText === "OK"){
+                console.log(res.data.tarif[0]);
+                this.setState({
+                    amountday: res.data.tarif[0].amountday,
+                    amounthour: res.data.tarif[0].amounthour,
+                });
+
+            }else{
+                toast.error('Something wrong with Tariff single Fetch API');
+            }
+
+
+        }).catch((error) => {
+            console.log("Inside catch block fetch single Tariff" + error);
+
+        });
     }
 
 
@@ -139,7 +167,7 @@ class ViewModal extends Component {
 
         let token = localStorage.getItem('userKey');
         //console.log(this.state.totalValue);
-        console.log(this.dateDiffHere(this.state.startDate, this.state.endDate));
+        // console.log(this.dateDiffHere(this.state.startDate, this.state.endDate));
         if(this.state.startDate !=='' && this.state.endDate !== '' && this.state.tariffId !== '' && this.state.bookingType !== ''){
 
             const bookingData = {
@@ -148,13 +176,82 @@ class ViewModal extends Component {
                 tariffId: this.state.tariffId,
                 selfDriving: this.state.selfDriving,
                 bookingType: this.state.bookingType,
-                cabid: this.props.data[this.props.indexNo].id
+                cabid: this.props.data[this.props.indexNo].id,
+                day: this.dateDiffHere(this.state.startDate, this.state.endDate)
             }
             if(token){
                 // toast.success("done");
 
                 let tokenData = Validation.parseJwt(localStorage.getItem('userKey'));
                 console.log(tokenData);
+                if(this.dateDiffHere(this.state.startDate, this.state.endDate) > 0 && this.state.bookingType === 'day'){
+                    // bookingData.amount = 10;
+                    // this.getTarifDetailsById(this.state.tariffId);
+                    axios.get('http://4048746d.ngrok.io/api/tarif/gettarifbyid/'+this.state.tariffId).then((response) => {
+                        const res = response;
+                        console.log(res);
+                        if(res.status === 200 && res.statusText === "OK"){
+                            console.log(res.data.tarif[0]);
+                            bookingData.amount = ((res.data.tarif[0].amountday * this.state.dayHourInput) + (res.data.tarif[0].nightcharge * this.state.dayHourInput))
+                            this.setState({amount: bookingData.amount});
+
+                        }else{
+                            toast.error('Something wrong with Tariff single Fetch API');
+                        }
+
+
+                    }).catch((error) => {
+                        console.log("Inside catch block fetch single Tariff" + error);
+
+                    });
+
+
+                }
+                if(this.dateDiffHere(this.state.startDate, this.state.endDate) > 0 && this.state.bookingType === 'hour'){
+
+                    axios.get('http://4048746d.ngrok.io/api/tarif/gettarifbyid/'+this.state.tariffId).then((response) => {
+                        const res = response;
+                        console.log(res);
+                        if(res.status === 200 && res.statusText === "OK"){
+                            console.log(res.data.tarif[0]);
+                            bookingData.amount = (res.data.tarif[0].amounthour * this.state.dayHourInput)
+                            this.setState({amount: bookingData.amount});
+
+                        }else{
+                            toast.error('Something wrong with Tariff single Fetch API');
+                        }
+
+
+                    }).catch((error) => {
+                        console.log("Inside catch block fetch single Tariff" + error);
+
+                    });
+
+
+                }
+                if(this.dateDiffHere(this.state.startDate, this.state.endDate) === 0 ){
+
+                    axios.get('http://4048746d.ngrok.io/api/tarif/gettarifbyid/'+this.state.tariffId).then((response) => {
+                        const res = response;
+                        console.log(res);
+                        if(res.status === 200 && res.statusText === "OK"){
+                            console.log(res.data.tarif[0]);
+                            bookingData.amount = (res.data.tarif[0].amounthour * this.state.dayHourInput)
+                            this.setState({amount: bookingData.amount});
+
+                        }else{
+                            toast.error('Something wrong with Tariff single Fetch API');
+                        }
+
+
+                    }).catch((error) => {
+                        console.log("Inside catch block fetch single Tariff" + error);
+
+                    });
+
+
+                }
+                // bookingData.amount = this.state.amountday;
                 bookingData.name =tokenData.user.firstname + ' ' + tokenData.user.lastname;
                 bookingData.phone =tokenData.user.phone;
                 bookingData.email =tokenData.user.email;
@@ -163,6 +260,7 @@ class ViewModal extends Component {
                 bookingData.userid =tokenData.user.id ;
                 // console.log(bookingData);
                 this.setState({bookingModal: !this.state.bookingModal , finalizeBooking: bookingData}  , () => {
+                    console.log("--------------------------------");
                     console.log(this.state.finalizeBooking);
                 })
             }else{
@@ -209,8 +307,13 @@ class ViewModal extends Component {
         });
     }
     confirmCheck = (e) => {
-        this.setState({selfDriving: !this.state.selfDriving},() => {
+        let tokenData = Validation.parseJwt(localStorage.getItem('userKey'));
+        let licenseUser = tokenData.user.license;
+        console.log(tokenData);
+        this.setState({selfDriving: !this.state.selfDriving , userLicense: licenseUser},() => {
             console.log(this.state.selfDriving);
+            console.log("-----------------------");
+            // console.log(tokenData);
         });
     }
     getBookByValue(e){
@@ -219,11 +322,70 @@ class ViewModal extends Component {
             console.log(this.state.bookingType);
         });
     }
+    getBookByValueDayHour(e){
+        console.log(e.target.value);
+        if(this.state.bookingtype === 'hour'){
+            this.setState({dayHourInput: e.target.value , hour: e.target.value},() => {
+                console.log(this.state.dayHourInput);
+            })
+        }else{
+            this.setState({dayHourInput: e.target.value},() => {
+                console.log(this.state.dayHourInput);
+            })
+        }
+
+    }
+
+    uniqueId(stringLength, possible)
+    {
+        stringLength = stringLength || 5;
+        possible = possible || "ABCDEFGHJKMNPQRSTUXY";
+        var text = "";
+
+        for(var i = 0; i < stringLength; i++) {
+            var character = this.getCharacter(possible);
+            while(text.length > 0 && character === text.substr(-1)) {
+                character = getCharacter(possible);
+            }
+            text += character;
+        }
+
+        return text;
+    }
+
+    getCharacter(possible) {
+        return possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+
+    addBooking(){
+
+        var FormData = {
+            userid: this.state.finalizeBooking.userid,
+            tarifid: this.state.finalizeBooking.tarifid,
+            bookingcode: this.uniqueId(10),
+            bookingtype: this.state.finalizeBooking.bookingtype,
+            cabid: this.state.finalizeBooking.cabid,
+            crewid: null,
+            name:this.state.finalizeBooking.name,
+            phone: this.state.finalizeBooking.phone,
+            email: this.state.finalizeBooking.email,
+            license: this.state.userLicense,
+            address: this.state.finalizeBooking.address,
+            pickuplocation: "",
+            destination: "",
+            days:this.state.finalizeBooking.day,
+            hours: this.state.hour,
+            bookingamount: this.state.amount,
+            status: "active",
+            ip: null
+        }
+        console.log(this.state.FormData);
+    }
 
 
 
     render() {
-
+        console.log(this.state.finalizeBooking);
         return (
             <div>
 
@@ -410,6 +572,10 @@ class ViewModal extends Component {
                                                             <option value="hour">Per Hour</option>
 
                                                         </CustomInput>
+                                                        <Label>Enter Value</Label>
+                                                        <Input name="dayHourInput" type="text"
+                                                               value={this.state.dayHourInput}
+                                                               onChange={this.getBookByValueDayHour.bind(this)}/>
                                                     </div>
                                                     <div className="col-1">
 
@@ -454,20 +620,32 @@ class ViewModal extends Component {
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td>{this.state.finalizeBooking.name}</td>
+                                        <td>{this.state.finalizeBooking.address}</td>
+                                        <td>{this.state.finalizeBooking.email}</td>
+                                        <td>{this.state.finalizeBooking.day}</td>
+                                        <td>{(this.state.finalizeBooking.selfDriving)?'YES':'NO'}</td>
+                                        <td>{this.state.finalizeBooking.phone}</td>
+                                        <td>{this.state.amount}</td>
                                     </tr>
 
                                     </tbody>
                                 </table>
+                                <span className="font-weight-light grey-text">Dear user this is your details ............</span>
+                                <Row className="mt-3">
+                                    {
+                                        (this.state.selfDriving) &&
+                                        <Col>
+                                           <span className="font-weight-bolder font-3-5x grey-text border-bottom-blue-x"> Your Licence Number is : {this.state.userLicense}</span>
+                                        </Col>
+                                    }
+                                    {/*<Col>.col</Col>
+                                    <Col>.col</Col>
+                                    <Col>.col</Col>*/}
+                                </Row>
                             </ModalBody>
                             <ModalFooter>
-                                <Button color="primary" onClick={this.toggleBook}>Do Something</Button>{' '}
+                                <Button color="primary" onClick={this.addBooking.bind(this)}>Confirm Booking</Button>
                                 <Button color="secondary" onClick={this.toggleBook}>Cancel</Button>
                             </ModalFooter>
                         </Modal>

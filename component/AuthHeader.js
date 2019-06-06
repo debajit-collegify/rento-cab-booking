@@ -23,6 +23,8 @@ class Index extends React.Component {
             let tokenData = Validation.parseJwt(localStorage.getItem('userKey'));
             console.log(tokenData.user.firstname +' '+ tokenData.user.lastname);
             let name = 'Hi ,' + tokenData.user.firstname +' '+ tokenData.user.lastname;
+            console.log(name);
+            console.log(tokenData);
 
 
             if(tokenData){
@@ -39,6 +41,7 @@ class Index extends React.Component {
             let tokenData = Validation.parseJwt(localStorage.getItem('adminKey'));
             console.log(tokenData.admin.name);
             let name = 'Hi Admin ,' + tokenData.admin.name;
+            // console.log(tokenData);
 
             if(localStorage.getItem('userKey')){
                 localStorage.removeItem('userKey');

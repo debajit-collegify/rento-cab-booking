@@ -127,7 +127,7 @@ class CabDetails extends React.Component {
             }
             console.log(FormData);
 
-            axios.post('http://4eb3aff0.ngrok.io/api/cab/create',FormData).then((response) => {
+            axios.post('http://4048746d.ngrok.io/api/cab/create',FormData).then((response) => {
                 const res = response;
                 console.log(res);
 
@@ -179,7 +179,7 @@ class CabDetails extends React.Component {
             }
             console.log(FormData);
 
-            axios.put('http://4eb3aff0.ngrok.io/api/cab/cabupdate/'+this.state.FormData.id,FormData).then((response) => {
+            axios.put('http://4048746d.ngrok.io/api/cab/cabupdate/'+this.state.FormData.id,FormData).then((response) => {
                 const res = response;
                 console.log(res);
 
@@ -210,7 +210,7 @@ class CabDetails extends React.Component {
         }, 600);
 
 
-        axios.get('http://4eb3aff0.ngrok.io/api/cab/getcabbyid/'+id).then((response) => {
+        axios.get('http://4048746d.ngrok.io/api/cab/getcabbyid/'+id).then((response) => {
             const res = response;
             console.log(res);
             if(res.status === 200 && res.statusText === "OK"){
@@ -244,7 +244,7 @@ class CabDetails extends React.Component {
 
     getAllCabDetails(){
 
-        axios.get('http://4eb3aff0.ngrok.io/api/cab').then((response) => {
+        axios.get('http://4048746d.ngrok.io/api/cab').then((response) => {
             const res = response;
             console.log(res);
             if(res.status === 200 && res.statusText === "OK"){

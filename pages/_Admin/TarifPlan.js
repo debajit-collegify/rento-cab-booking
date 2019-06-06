@@ -92,7 +92,7 @@ class TarifPlan extends React.Component {
 
     getAllTariffDetails(){
 
-        axios.get('http://4eb3aff0.ngrok.io/api/tarif').then((response) => {
+        axios.get('http://4048746d.ngrok.io/api/tarif').then((response) => {
             const res = response;
             console.log(res);
             if(res.status === 200 && res.statusText === "OK"){
@@ -173,7 +173,7 @@ class TarifPlan extends React.Component {
         }, 600);
 
 
-        axios.get('http://4eb3aff0.ngrok.io/api/tarif/gettarifbyid/'+id).then((response) => {
+        axios.get('http://4048746d.ngrok.io/api/tarif/gettarifbyid/'+id).then((response) => {
             const res = response;
             console.log(res);
             if(res.status === 200 && res.statusText === "OK"){
@@ -231,7 +231,7 @@ class TarifPlan extends React.Component {
             }
             console.log(FormData);
 
-            axios.put('http://4eb3aff0.ngrok.io/api/tarif/tarifupdate/'+this.state.FormData.id,FormData).then((response) => {
+            axios.put('http://4048746d.ngrok.io/api/tarif/tarifupdate/'+this.state.FormData.id,FormData).then((response) => {
                 const res = response;
                 console.log(res);
 

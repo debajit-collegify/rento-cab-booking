@@ -24,6 +24,7 @@ import ViewModal from './viewModal';
 import axios from 'axios';
 import _ from 'lodash';
 import {toast} from "react-toastify";
+import {Router} from "../../routes";
 
 
 
@@ -59,7 +60,7 @@ class Index extends React.Component {
 
     getAllCabDetails(){
 
-        axios.get('http://3820b782.ngrok.io/api/cab').then((response) => {
+        axios.get('http://4048746d.ngrok.io/api/cab').then((response) => {
             const res = response;
             console.log(res);
             if(res.status === 200 && res.statusText === "OK"){
@@ -240,27 +241,10 @@ class Index extends React.Component {
 
     componentDidMount() {
 
-        //console.log(this.props.query);
 
-        /*let api_url = "http://localhost:4010/cab-details";
-        fetch(api_url)
-            .then(res => res.json())
-            .then(data =>{
-                this.setState({cabDetails: data});
-            })*/
-
-        /*axios.get('http://localhost:4010/cab-details')
-            .then(response => {
-                let data = response.data;
-                this.setState({cabDetails : data , cabDetailsCopy : data} ,
-                    ()=>{
-                        this.getAllCarType();
-                    });
-
-            })
-            .catch(error => {
-                console.log(error);
-            });*/
+        if (localStorage.getItem('adminKey')) {
+            Router.push({ pathname: '/adminConfig' })
+        }
         this.getAllCabDetails();
 
 
