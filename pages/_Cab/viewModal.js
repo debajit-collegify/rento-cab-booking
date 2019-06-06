@@ -1,7 +1,25 @@
 import React, {Component} from 'react';
-import { Modal,ModalBody,ModalFooter,ModalHeader,Collapse, Button, CardBody, Card,CardImg, Badge, Label, Input, FormGroup } from "reactstrap";
+import {
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+    Collapse,
+    Button,
+    CardBody,
+    Card,
+    CardImg,
+    Badge,
+    Label,
+    Input,
+    FormGroup,
+    CustomInput, Col
+} from "reactstrap";
 import axios from 'axios';
 import {Link , Router} from '../../routes';
+import Validation from "../Validation";
+import {toast} from "react-toastify";
+import $ from "jquery";
 
 class ViewModal extends Component {
 
@@ -10,14 +28,18 @@ class ViewModal extends Component {
         this.toggle = this.toggle.bind(this);
         this.toggleBooking = this.toggleBooking.bind(this);
         this.dateDiffHere = this.dateDiffHere.bind(this);
-        this.calculateTotal = this.calculateTotal.bind(this);
+
 
         this.state = {
             collapse: true,
             startDate: new Date().toISOString().slice(0, 10),
             endDate: null,
             collapseBooking: false,
-            totalVal: null
+            totalVal: null,
+            tariffList: [],
+            tariffId: '',
+            selfDriving: false,
+            bookingType: ''
         };
     }
 
@@ -26,15 +48,8 @@ class ViewModal extends Component {
     }
 
     toggleBooking() {
-        this.setState({ collapseBooking: !this.state.collapseBooking , collapse : false});
-
-        /*var startDate = localStorage.getItem('StDate');
-        var Days = localStorage.getItem('Days');
-
-        var date = startDate;
-        var endDate = date.getDate() + Days;
-
-        console.log(date + '---' + endDate);*/
+        this.setState({ collapseBooking: !this.state.collapseBooking , collapse : false , selfDriving: false});
+        this.getTariffByCabType(this.props.data[this.props.indexNo].type);
 
     }
 
@@ -54,11 +69,35 @@ class ViewModal extends Component {
 
     }
 
+    getTariffByCabType(type){
+
+        axios.get('http://bb9f06da.ngrok.io/api/tarif/gettarifbycabtype/'+type).then((response) => {
+            const res = response;
+            console.log(res);
+            if(res.status === 200 && res.statusText === "OK"){
+                if(res.data.tarif.length > 0){
+
+                    this.setState({tariffList: res.data.tarif})
+                }else{
+                    this.setState({tariffList: []})
+                    toast.info("No Plan Available");
+                }
+            }else{
+                toast.error('Something wrong with tarif List Fetch API');
+            }
+
+
+        }).catch((error) => {
+            console.log("Inside catch block fetch single tarif" + error);
+
+        })
+    }
+
 
     handleChangeStart(e) {
         if(e.target.value < this.state.startDate){
 
-            alert("Start date should be today or future Date");
+            toast.info("Start date should be today or future Date");
             return false;
         }else{
             this.setState({ startDate : e.target.value});
@@ -66,37 +105,17 @@ class ViewModal extends Component {
 
 
     }
-    calculateTotal(){
-
-        let edDate = this.state.endDate;
-        let stDate = this.state.startDate;
-
-        if(stDate !== null && edDate !== null && stDate >= edDate){
-            let dateDifference = this.dateDiffHere(stDate , edDate);
-            console.log(dateDifference);
-            let total = parseInt(this.props.data[this.props.indexNo].budgetPlanPerHr) * parseInt(dateDifference);
-            console.log(" calculate total function" + total);
-            return total;
-
-        }
-    }
 
     handleChangeEnd(e) {
 
 
         if(e.target.value < this.state.startDate)
         {
-            alert("End Date Should be grater than Start Date");
+            toast.info("End Date Should be grater than Start Date");
             return false;
         }else{
             var endDate = e.target.value;
-            setTimeout(()=>{
-                this.setState({ endDate : endDate});
-            },500);
-            console.log(this.state.startDate,this.state.endDate);
-
-            console.log(this.calculateTotal());
-
+            this.setState({ endDate : endDate});
 
         }
 
@@ -108,58 +127,19 @@ class ViewModal extends Component {
 
         let token = localStorage.getItem('userKey');
         //console.log(this.state.totalValue);
-        /*Login check done first*/
-
-        if(token){
-
-            let stDate = this.state.startDate;
-            let edDate = this.state.endDate;
-            var cabId = this.props.data[this.props.indexNo].id;
-
-            /*user Data*/
-            let userEmail = localStorage.getItem('userEmail');
-
-            if(stDate !== null && edDate !== null){
-                if(stDate >= new Date().toISOString().slice(0, 10) && edDate >= stDate){
-
-                    /*Post Call for Insert booking Details*/
-
-                    axios.post('http://localhost:4010/booking-details', {
-                        cabId: this.props.data[this.props.indexNo].id,
-                        userEmail: userEmail,
-                        bookingDate: new Date().toISOString().slice(0, 10),
-                        startDate: stDate,
-                        endDate: edDate,
-                        totalValue: this.props.data[this.props.indexNo].budgetPlanPerHr *
-                            this.dateDiffHere(stDate , edDate),
-                        bookingId: "00ab1"+stDate+"0001234"+edDate,
-                        bookedOn: new Date().toISOString().slice(0,10)
-
-                    }).then(resp => {
-                        //console.log(resp.data);
-                        this.props.toggleViewDetailsModal.bind(this);
-                        Router.pushRoute('/cab/my-bookings?status=confirm');
-                        //Router.pushRoute('/cab/my-bookings');
-                    }).catch(error => {
-                        console.log(error);
-                    });
-
-                    /*Post Call end*/
-
-
-                }else{
-                    alert("start date should be grater than today and end date should be grater than start date");
-                }
-            }else{
-                alert("Date filed should not be blank");
+        console.log(this.dateDiffHere(this.state.startDate, this.state.endDate));
+        if(this.state.startDate !=='' && this.state.endDate !== '' && this.state.tariffId !== '' && this.state.bookingType !== ''){
+            toast.success("done")
+            const bookingData = {
+                startDate: this.state.startDate,
+                endDate: this.state.endDate,
+                tariffId: this.state.tariffId,
+                selfDriving: this.state.selfDriving,
+                bookingType: this.state.bookingType
             }
-
         }else{
-            Router.pushRoute('/auth/login');
+            toast.info("Select Date and tariff to proceed farther");
         }
-
-
-
 
     }
 
@@ -173,6 +153,25 @@ class ViewModal extends Component {
         /*alert(diffDays);*/
         return diffDays;
     }
+
+    getTariffValue(e){
+        console.log(e.target.value);
+        this.setState({tariffId: e.target.value},() => {
+            console.log(this.state.tariffId);
+        });
+    }
+    confirmCheck = (e) => {
+        this.setState({selfDriving: !this.state.selfDriving},() => {
+            console.log(this.state.selfDriving);
+        });
+    }
+    getBookByValue(e){
+        console.log(e.target.value);
+        this.setState({bookingType: e.target.value},() => {
+            console.log(this.state.bookingType);
+        });
+    }
+
 
 
     render() {
@@ -209,26 +208,26 @@ class ViewModal extends Component {
                                         <Card>
                                             <CardBody>
                                                 <div className="row">
-                                                    <div className="col-6 font-4x font-weight-light">
-                                                        {this.props.data[this.props.indexNo].cabTitle}
+                                                    <div className="col-6 font-3x ml-4 font-weight-light">
+                                                        {this.props.data[this.props.indexNo].company}
                                                     </div>
                                                     <div className="col-5 float-right">
-                                                        <img className="collap-img-style" src={this.props.data[this.props.indexNo].imgSrc} alt="Card image cap" />
+                                                        <img className="collap-img-style" src="../../static/images/two.png" alt="Card image cap" />
                                                     </div>
                                                     <div className="col-1"></div>
                                                 </div>
                                                 <div className="row">
                                                     <div className="col-12 font-2-5x font-weight-light grey-text margin-left-1-5x">
-                                                        {this.props.data[this.props.indexNo].carNUmber}
+                                                        {this.props.data[this.props.indexNo].regno}
                                                     </div>
                                                 </div>
                                                 <div className="row">
                                                     <div className="col-6">
-                                                        <Badge className="font-weight-light font-1-5x padding-0-5x margin-left-2x" color="primary">{this.props.data[this.props.indexNo].carType}</Badge>
+                                                        <Badge className="font-weight-light font-1-5x margin-left-2x" color="primary">{this.props.data[this.props.indexNo].type}</Badge>
                                                     </div>
                                                     <div className="col-6 font-4x font-weight-bold">
-                                                        <span className="float-right margin-right-5x margin-top-neg-0-10x">{this.props.data[this.props.indexNo].budgetPlanPerHr} INR</span>
-                                                        <span className="font-2-5x font-weight-light hour-style">/Hour</span>
+                                                        <span className="float-right margin-top-neg-0-10x" style={{marginRight: '9rem'}}>{this.props.data[this.props.indexNo].model}</span>
+
                                                     </div>
                                                 </div>
 
@@ -263,12 +262,12 @@ class ViewModal extends Component {
                                                         <span className="font-1-2x grey-text margin-left-1-5x">End Date</span>
                                                     </div>
                                                     <div className="col-4">
-                                                        <span className="font-2x float-right font-weight-light margin-right-1-5x">Amount to pay</span>
+                                                        <span className="font-2x float-right font-weight-light margin-right-1-5x"></span>
                                                     </div>
                                                 </div>
                                                 {/*--------------------------------------*/}
                                                 <div className="row">
-                                                    <div className="col-4">
+                                                    <div className="col-3">
                                                         <span className="font-1-2x grey-text margin-left-3x">
                                                             <FormGroup className="date-pick-modal">
 
@@ -282,7 +281,7 @@ class ViewModal extends Component {
                                                             </FormGroup>
                                                         </span>
                                                     </div>
-                                                    <div className="col-4">
+                                                    <div className="col-3">
                                                         <span className="font-1-2x grey-text margin-left-3x">
                                                             <FormGroup className="date-pick-modal">
 
@@ -296,12 +295,81 @@ class ViewModal extends Component {
                                                             </FormGroup>
                                                         </span>
                                                     </div>
-                                                    <div className="col-4">
-                                                        <span className="float-right font-3x">{this.state.totalVal} INR</span>
-                                                        <span className="absolute right-5x" style={{top:'55px'}}>
-                                                            <button onClick={this.handelBooking.bind(this)} className="box-shadow border-radius-25 btn-style padding-0-7x font-1-2x">Finalize booking</button>
-                                                        </span>
+                                                    <div className="col-3">
+                                                        {/*<Label for="title"
+                                                               className="font-1-4x grey-text text-darken-2 float-left"> Tariff Plan</Label>*/}
+                                                        <CustomInput type="select" id="exampleCustomSelect" name="plan"
+                                                                     onChange={this.getTariffValue.bind(this)}>
 
+                                                            <option value="">Choose Plan</option>
+                                                            {
+                                                                this.state.tariffList.map((value,i) => (
+                                                                    <option value={value.id} key={value.id}>{value.name}</option>
+                                                                ))
+                                                            }
+
+
+                                                        </CustomInput>
+
+                                                    </div>
+                                                    <div className="col-3">
+                                                        <button onClick={this.handelBooking.bind(this)} className="box-shadow border-radius-25 btn-style padding-0-7x font-1-2x">Finalize booking</button>
+                                                    </div>
+
+                                                </div>
+                                                <div className="row">
+                                                    <div className="col-6">
+
+
+                                                        ----------------------
+
+
+                                                        <table className="table">
+                                                            <thead>
+                                                            <tr>
+                                                                <th>per/Day</th>
+                                                                <th>per/Hour</th>
+                                                                <th>CabType</th>
+                                                                <th>NightCharge</th>
+                                                                <th>Name</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {
+                                                                this.state.tariffList.length > 0 && this.state.tariffList.map((val,i) => (
+                                                                    <tr key={i}>
+                                                                        <td>{val.amountday}</td>
+                                                                        <td>{val.amounthour}</td>
+                                                                        <td>{val.cabtype}</td>
+                                                                        <td>{val.nightcharge}</td>
+                                                                        <td>{val.name}</td>
+                                                                    </tr>
+                                                                ))
+                                                            }
+
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                    <div className="col-3">
+                                                        <FormGroup check className="mt-4">
+                                                            <Input type="checkbox" name="check" id="checkNow" onChange={this.confirmCheck.bind(this)}
+                                                            checked={this.state.selfDriving}/>
+                                                            Self Driving
+                                                        </FormGroup>
+                                                        <CustomInput type="select" id="exampleCustomSelect" name="bookBy"
+                                                                     className="mt-4"
+                                                                     onChange={this.getBookByValue.bind(this)}>
+
+                                                            <option value="">Choose Booking Type</option>
+                                                            <option value="day">Per Day</option>
+                                                            <option value="hour">Per Hour</option>
+
+                                                        </CustomInput>
+                                                    </div>
+                                                    <div className="col-1">
+
+                                                    </div>
+                                                    <div className="col-1">
                                                     </div>
 
                                                 </div>

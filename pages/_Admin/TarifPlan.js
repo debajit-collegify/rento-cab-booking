@@ -18,11 +18,16 @@ import {
     UncontrolledCollapse,
     FormGroup,
     FormFeedback,
-    FormText, CustomInput, UncontrolledTooltip
+    FormText, CustomInput, UncontrolledTooltip, ListGroupItemText
 }
     from 'reactstrap';
 
 import _ from 'lodash';
+import Validation from "../Validation";
+import axios from "axios";
+import {toast} from 'react-toastify';
+import $ from "jquery";
+import moment from 'moment';
 
 
 
@@ -30,45 +35,224 @@ class TarifPlan extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            variable: {
-                loader: false,
-                showForm: false
+            FormData: {
+                id: '',
+                name: '',
+                description: '',
+                amountday: '',
+                amounthour: '',
+                nightcharge: '',
+                cabtype: '',
+                status: ''
+            },
+            validationTest: false,
+            loading: false,
+            updateFlag: false,
+            tariffList: [],
+            noDataFound: false
+
+        }
+
+    }
+
+    componentDidMount() {
+         this.getAllTariffDetails();
+    }
+
+    getFormValue(e){
+        this.setState({
+            FormData: {
+                ...this.state.FormData,
+                [e.target.name]: e.target.value
+            },
+            validationTest: false
+        },() => {
+            console.log(this.state.FormData);
+        })
+    }
+
+    clearFormData(){
+        this.setState({
+            FormData: {
+                ...this.state.FormData,
+                id: '',
+                name: '',
+                description: '',
+                amountday: '',
+                amounthour: '',
+                nightcharge: '',
+                cabtype: '',
+                status: ''
+            },
+            validationTest: false,
+            loading: false,
+            updateFlag: false
+        });
+    }
+
+    getAllTariffDetails(){
+
+        axios.get('http://4eb3aff0.ngrok.io/api/tarif').then((response) => {
+            const res = response;
+            console.log(res);
+            if(res.status === 200 && res.statusText === "OK"){
+                if(res.data.tarif.length < 1){
+
+                    this.setState({tariffList: res.data.tarif , noDataFound: true})
+                }else{
+                    this.setState({tariffList: res.data.tarif , noDataFound: false})
+                }
+            }else{
+                toast.error('Something wrong with tarif List Fetch API');
             }
 
-        };
 
+        }).catch((error) => {
+            console.log("Inside catch block fetch all tarif" + error);
+
+        });
     }
 
-    /*static getInitialProps({query}) {
-        return {query}
-    }*/
+    addTariffDetails(){
+        this.setState({
+            validationTest: true,
+            loading: true
+        })
 
+        if(Validation.stringValidate(this.state.FormData.name) &&
+            Validation.stringValidate(this.state.FormData.description) &&
+            Validation.positiveNumber(this.state.FormData.amountday) &&
+            Validation.positiveNumber(this.state.FormData.amounthour) &&
+            Validation.positiveNumber(this.state.FormData.nightcharge) &&
+            Validation.stringValidate(this.state.FormData.cabtype) &&
+            Validation.stringValidate(this.state.FormData.status)){
 
+            console.log("all validation Done");
+            // delete this.state.FormData.id;
 
+            var FormData = {
 
-    /*componentDidMount() {
+                name: this.state.FormData.name,
+                description: this.state.FormData.description,
+                amountday: this.state.FormData.amountday,
+                amounthour: this.state.FormData.amounthour,
+                nightcharge: this.state.FormData.nightcharge,
+                cabtype: this.state.FormData.cabtype,
+                status: this.state.FormData.status,
+            }
+            console.log(FormData);
 
+            axios.post('http://4eb3aff0.ngrok.io/api/tarif/create',FormData).then((response) => {
+                const res = response;
+                console.log(res);
 
-    }*/
-    addNew = () => {
-        const parentThis = this;
-        const state = parentThis.state;
-        state.variable.showForm = true;
-        parentThis.setState(state);
+                if(res.status === 200 && res.statusText === "OK"){
+                    this.setState({loading: false});
+                    toast.success('Tariff added successful');
+                    this.clearFormData();
+                    this.getAllTariffDetails();
+                }else{
+                    toast.error('Something wrong with Tariff addition');
+                    this.setState({loading: false});
+                }
+
+            }).catch((error) => {
+                console.log("Inside catch block add Tariff" + error);
+                this.setState({loading: false});
+            });
+        }else{
+            toast.error('One or more required fields are missing');
+            this.setState({loading: false});
+        }
     }
 
-    closeForm = () => {
-        const parentThis = this;
-        const state = parentThis.state;
-        state.variable.showForm = false;
-        parentThis.setState(state);
+    singleFetchUpdateCall(id){
+        console.log(id);
+        $('html, body').animate({
+            scrollTop: $("#mainId").offset().top
+        }, 600);
+
+
+        axios.get('http://4eb3aff0.ngrok.io/api/tarif/gettarifbyid/'+id).then((response) => {
+            const res = response;
+            console.log(res);
+            if(res.status === 200 && res.statusText === "OK"){
+                console.log(res.data.tarif[0]);
+                this.setState({
+                    FormData: {
+                        ...this.state.FormData,
+                        id: res.data.tarif[0].id,
+                        name: res.data.tarif[0].name,
+                        description: res.data.tarif[0].description,
+                        amountday: res.data.tarif[0].amountday,
+                        amounthour: res.data.tarif[0].amounthour,
+                        nightcharge: res.data.tarif[0].nightcharge,
+                        cabtype: res.data.tarif[0].cabtype,
+                        status: res.data.tarif[0].status.toString(),
+
+
+                    },
+                    updateFlag: true
+                })
+
+            }else{
+                toast.error('Something wrong with Tariff single Fetch API');
+            }
+
+
+        }).catch((error) => {
+            console.log("Inside catch block fetch single Tariff" + error);
+
+        });
     }
 
-    updateDetails = () => {
-        const parentThis = this;
-        const state = parentThis.state;
-        state.variable.showForm = true;
-        parentThis.setState(state);
+    UpdateTariffDetails(){
+        this.setState({
+            validationTest: true,
+            loading: true
+        })
+
+        if(Validation.stringValidate(this.state.FormData.name) &&
+            Validation.stringValidate(this.state.FormData.description) &&
+            Validation.positiveNumber(this.state.FormData.amountday) &&
+            Validation.positiveNumber(this.state.FormData.amounthour) &&
+            Validation.positiveNumber(this.state.FormData.nightcharge) &&
+            Validation.stringValidate(this.state.FormData.cabtype) &&
+            Validation.stringValidate(this.state.FormData.status)){
+
+            var FormData = {
+                name: this.state.FormData.name,
+                description: this.state.FormData.description,
+                amountday: this.state.FormData.amountday,
+                amounthour: this.state.FormData.amounthour,
+                nightcharge: this.state.FormData.nightcharge,
+                cabtype: this.state.FormData.cabtype,
+                status: this.state.FormData.status,
+            }
+            console.log(FormData);
+
+            axios.put('http://4eb3aff0.ngrok.io/api/tarif/tarifupdate/'+this.state.FormData.id,FormData).then((response) => {
+                const res = response;
+                console.log(res);
+
+                if(res.status === 200 && res.statusText === "OK"){
+                    this.setState({loading: false});
+                    toast.success('Tariff Updated successful');
+                    this.clearFormData();
+                    this.getAllTariffDetails();
+                }else{
+                    toast.error('Something wrong with Tariff Update');
+                    this.setState({loading: false});
+                }
+
+            }).catch((error) => {
+                console.log("Inside catch block Tariff update" + error);
+                this.setState({loading: false});
+            });
+        }else{
+            toast.error('One or more required fields are missing');
+            this.setState({loading: false});
+        }
     }
 
 
@@ -78,250 +262,231 @@ class TarifPlan extends React.Component {
         return (
 
             <div>
-                <div className="jumbotron">
+                <div className="jumbotron" id="mainId">
 
-                    {
-                        (this.state.variable.showForm)&&
-                        <div className="jumbotron margin-top-off bg-info">
+                    <div className="jumbotron margin-top-off bg-info">
 
-                            <ListGroup className={'margin-top-off'}>
-                                <ListGroupItem className={'margin-bottom-x padding-2x card-shadow pulse-highlight'}>
+                        <ListGroup className={'margin-top-off'}>
+                            <ListGroupItem className={'margin-bottom-x padding-2x card-shadow pulse-highlight'}>
 
-                                    <Row>
-                                        <Col sm={2} className={'text-center'}>
+                                <Row>
+                                    <Col sm={2} className={'text-center'}>
                                    <span
                                        className="font-1-4x pl-3 pr-3 pt-2 pb-2 black-text bold grey lighten-4 top-off left">CAB TARIFF PLAN</span>
-                                        </Col>
-                                        <Col sm={{size: 2, offset: 7}}
-                                             className={'padding-right-off margin-top-0-5x text-center'}>
-                                        </Col>
-                                    </Row>
-                                    <hr/>
-                                    <Row>
-                                        <Col sm={6} className={'text-left mt-1'}>
-                                            <Label for="title"
-                                                   className="font-1-4x grey-text text-darken-2 float-left"> Tariff Plan Name</Label>
-                                            <Input name="paymentTitle"
-                                                /*className={`${state.validationTest && (!Validation.stringValidate(state.SubscriptionList.paymentTitle) && 'border-red-x')}`}*/
-                                                   type="text"/>
-                                        </Col>
-                                        <Col sm={{size: 3}} className={'text-left mt-1'}>
-                                            <Label className="font-1-4x text-darken-2 grey-text float-left">Amount Per/Day</Label>
+                                    </Col>
+                                    <Col sm={{size: 2, offset: 7}}
+                                         className={'padding-right-off margin-top-0-5x text-center'}>
+                                    </Col>
+                                </Row>
+                                <hr/>
+                                <Row>
+                                    <Col sm={3} className={'text-left mt-1'}>
+                                        <Label for="title"
+                                               className="font-1-4x grey-text text-darken-2 float-left"> Tariff Plan Name</Label>
+                                        <Input name="name"
+                                            value={this.state.FormData.name}
+                                                     className={`${this.state.validationTest && (!Validation.stringValidate(this.state.FormData.name) && 'error')}`}
+                                                     onChange={this.getFormValue.bind(this)}
+                                               type="text"/>
+                                    </Col>
+                                    <Col sm={3}>
+                                        <Label for="title"
+                                               className="font-1-4x grey-text text-darken-2 float-left"> Tariff Status</Label>
+                                        <CustomInput type="select" id="exampleCustomSelect" name="status"
+                                                     value={this.state.FormData.status}
+                                                     className={`${this.state.validationTest && (!Validation.stringValidate(this.state.FormData.status) && 'error')}`}
+                                                     onChange={this.getFormValue.bind(this)}>
+                                            <option value="">Choose Status</option>
+                                            <option value="1">Active</option>
+                                            <option value="0">Inactive</option>
+                                        </CustomInput>
+                                    </Col>
+                                    <Col sm={{size: 3}} className={'text-left mt-1'}>
+                                        <Label className="font-1-4x text-darken-2 grey-text float-left">Amount Per/Day</Label>
 
-                                            <InputGroup bSsize="md">
-                                                <InputGroupAddon addonType="prepend">RS</InputGroupAddon>
-                                                <Input type="number"
-                                                    /*className={`${state.validationTest && (!Validation.positiveNumber(state.SubscriptionList.paymentPrice) && 'border-red-x')}`}*/
-                                                       name="paymentPrice"/>
-                                            </InputGroup>
+                                        <InputGroup bSsize="md">
+                                            <InputGroupAddon addonType="prepend">RS</InputGroupAddon>
+                                            <Input type="number"
+                                                   value={this.state.FormData.amountday}
+                                                   className={`${this.state.validationTest && (!Validation.positiveNumber(this.state.FormData.amountday) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}
+                                                   name="amountday"/>
+                                        </InputGroup>
 
-                                        </Col>
-                                        <Col sm={{size: 3}} className={'text-left mt-1'}>
-                                            <Label className="font-1-4x grey-text text-darken-2 float-left">Cab Type</Label>
-                                            <Input size="md" type="select"
-                                                /* className={`${state.validationTest && (!Validation.stringValidate(state.SubscriptionList.paymentType) && 'border-red-x')}`}*/
-                                                   name="paymentType">
-                                                <option value="">Choose Type</option>
-                                                <option value="mini">mini</option>
-                                                <option value="micro">micro</option>
-                                                <option value="sedan">sedan</option>
-                                            </Input>
+                                    </Col>
+                                    <Col sm={{size: 3}} className={'text-left mt-1'}>
+                                        <Label className="font-1-4x grey-text text-darken-2 float-left">Cab Type</Label>
+                                        <Input type="text"
+                                               value={this.state.FormData.cabtype}
+                                               className={`${this.state.validationTest && (!Validation.stringValidate(this.state.FormData.cabtype) && 'error')}`}
+                                               onChange={this.getFormValue.bind(this)}
+                                               name="cabtype"/>
 
-                                        </Col>
-                                    </Row>
-                                    <Row className="margin-top-1-5x">
-                                        <Col sm={6} className={'text-left mt-1'}>
+                                    </Col>
+                                </Row>
+                                <Row className="margin-top-1-5x">
+                                    <Col sm={6} className={'text-left mt-1'}>
 
-                                            <Label for="desc"
-                                                   className="font-1-4x grey-text text-darken-2 float-left">Tariff Plan Description</Label>
-                                            <textarea name="paymentDescription"
-                                                      className="form-control"
-                                                /*className={`form-control ${state.validationTest && (!Validation.stringValidate(state.SubscriptionList.paymentDescription) && 'border-red-x')}`}*/
-                                                      rows="3"/>
-                                        </Col>
-                                        <Col sm={{size: 3}} className={'text-left mt-1'}>
-                                            <Label className="font-1-4x text-darken-2 grey-text float-left">Amount Per/HR</Label>
+                                        <Label for="desc"
+                                               className="font-1-4x grey-text text-darken-2 float-left">Tariff Plan Description</Label>
+                                        <textarea name="description"
+                                                  value={this.state.FormData.description}
+                                                  className={`form-control ${this.state.validationTest && (!Validation.stringValidate(this.state.FormData.description) && 'error')}`}
+                                                  onChange={this.getFormValue.bind(this)}
+                                                  rows="3"/>
+                                    </Col>
+                                    <Col sm={{size: 3}} className={'text-left mt-1'}>
+                                        <Label className="font-1-4x text-darken-2 grey-text float-left">Amount Per/HR</Label>
 
-                                            <InputGroup bSsize="md">
-                                                <InputGroupAddon addonType="prepend">RS</InputGroupAddon>
-                                                <Input type="number"
-                                                    /*className={`${state.validationTest && (!Validation.positiveNumber(state.SubscriptionList.paymentPrice) && 'border-red-x')}`}*/
-                                                       name="paymentPrice"/>
-                                            </InputGroup>
+                                        <InputGroup bSsize="md">
+                                            <InputGroupAddon addonType="prepend">RS</InputGroupAddon>
+                                            <Input type="number"
+                                                   value={this.state.FormData.amounthour}
+                                                   className={`${this.state.validationTest && (!Validation.positiveNumber(this.state.FormData.amounthour) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}
+                                                   name="amounthour"/>
+                                        </InputGroup>
 
-                                        </Col>
-                                        <Col sm={{size: 3}} className={'text-left mt-1'}>
-                                            <Label className="font-1-4x text-darken-2 grey-text float-left">Night Charge</Label>
+                                    </Col>
+                                    <Col sm={{size: 3}} className={'text-left mt-1'}>
+                                        <Label className="font-1-4x text-darken-2 grey-text float-left">Night Charge</Label>
 
-                                            <InputGroup bSsize="md">
-                                                <InputGroupAddon addonType="prepend">RS</InputGroupAddon>
-                                                <Input type="number"
-                                                    /*className={`${state.validationTest && (!Validation.positiveNumber(state.SubscriptionList.paymentPrice) && 'border-red-x')}`}*/
-                                                       name="paymentPrice"/>
-                                            </InputGroup>
+                                        <InputGroup bSsize="md">
+                                            <InputGroupAddon addonType="prepend">RS</InputGroupAddon>
+                                            <Input type="number"
+                                                   value={this.state.FormData.nightcharge}
+                                                   className={`${this.state.validationTest && (!Validation.positiveNumber(this.state.FormData.nightcharge) && 'error')}`}
+                                                   onChange={this.getFormValue.bind(this)}
+                                                   name="nightcharge"/>
+                                        </InputGroup>
 
-                                        </Col>
+                                    </Col>
 
-                                    </Row>
+                                </Row>
 
-                                    <Row className="margin-top-1-5x">
-                                        <Col sm={{size: 2, offset: 10}} className={'padding-left-off float-right'}>
-                                            <Button
+                                <Row className="margin-top-1-5x">
+                                    <Col sm={{size: 2, offset: 10}} className={'padding-left-off float-right'}>
+                                        {
+                                            this.state.updateFlag ?
+                                                <Button
 
-                                                className="float-right btn-action-control box-shadow text-center no-radius ripple padding-0-2x"
-                                                style={{lineHeight: "1px"}}>
+                                                    className="float-right btn-action-control box-shadow text-center no-radius ripple padding-0-2x"
+                                                    style={{lineHeight: "1px"}}
+                                                    onClick={this.UpdateTariffDetails.bind(this)}
+                                                    disabled={this.state.loading}>
 
-                                                <i className="material-icons">check</i>
+                                                    <i className="material-icons">system_update_alt</i>
 
-                                            </Button>
-                                            <Button
-                                                outline
-                                                onClick={this.closeForm.bind(this)}
-                                                className="float-right margin-right-0-2x box-shadow text-center no-radius ripple padding-0-2x"
-                                                color="secondary" style={{lineHeight: "1px"}}>
-                                                <i className="material-icons">close</i>
-                                            </Button>
-                                        </Col>
-                                    </Row>
-                                </ListGroupItem>
-                            </ListGroup>
-                        </div>
-                    }
+                                                </Button>
+                                                :
+                                                <Button
+
+                                                    className="float-right btn-action-control box-shadow text-center no-radius ripple padding-0-2x"
+                                                    style={{lineHeight: "1px"}}
+                                                    onClick={this.addTariffDetails.bind(this)}
+                                                    disabled={this.state.loading}>
+
+                                                    <i className="material-icons">check</i>
+
+                                                </Button>
+
+                                        }
+                                        <Button
+                                            outline
+                                            onClick={this.clearFormData.bind(this)}
+                                            className="float-right margin-right-0-2x box-shadow text-center no-radius ripple padding-0-2x"
+                                            color="secondary" style={{lineHeight: "1px"}}>
+                                            <i className="material-icons">close</i>
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            </ListGroupItem>
+                        </ListGroup>
+
+                    </div>
 
                     <div className="jumbotron" style={{backgroundColor: '#e1e1d0'}}>
 
-                        <ListGroup className={'margin-top-off transparent'}>
-                            <div style={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                justifyContent: 'flex-start',
-                                alignItems: 'center'
-                            }}>
-                                {/*<div className="font-2x" style={{flexGrow: 1}}>
-                               Filters:
-                           </div>
-                           <div className="ml-3 mr-2 flex">
-                               <span className={'font-1-4x grey-text text-darken-5 mt-1 ml-2 mr-2'}>By Country :</span>
-                               <Input size="sm" type="select" className={'border-radius-25'} style={{width: '6rem'}}
-                                      name="country">
-                                   <option value=''>Country</option>
-                                   <option value='all'>All</option>
+                        <ListGroup className={'padding-2x thin-border'}>
+                            {
+                                this.state.tariffList.length > 0 && this.state.tariffList.map((val, i) =>
+                                    <ListGroup key={i}>
 
-                               </Input>
-                           </div>
-                           <div className="ml-3 mr-2 flex">
-                               <span className={'font-1-4x grey-text text-darken-5 mt-1 ml-2 mr-2'}>By Currency :</span>
-                               <Input size="sm" type="select" name="currency" style={{width: '6rem'}}>
-                                   <option value="">Currency</option>
-                                   <option value="all">All</option>
-
-                               </Input>
-                           </div>*/}
-                            </div>
-
-
-                            <Row className={`mt-3`}>
-                                <Col sm={4} className={'text-center margin-bottom-x'}>
-                                    <Card body outline className="small-border card-shadow pointer" style={{height: '17rem'}}
-                                          onClick={this.addNew.bind(this)}>
-                                        <CardTitle className="margin-top-3x">
-                                            <Badge pill style={{width: 75, height: 75, lineHeight: 6.5}}
-                                                   className="auto grey lighten-3 no-border">
-                                                <i className="circle material-icons grey-text font-4x"
-                                                   style={{padding: '10px'}}>add</i>
-                                            </Badge>
-                                        </CardTitle>
-                                        <CardText className={'mt-1 mb-0 font-1-5x grey-text text-darken-4'}>Add
-                                            New</CardText>
-                                    </Card>
-                                </Col>
-
-
-                                <Col sm={4} className={'text-center margin-bottom-2x hvr-grow'}>
-                                    <section className={`absolute z-index-one circle box-shadow padding-0-5x grey lighten-4 self-middle left-50`}>
-                                        <div className={'grey-text text-darken-4 mt-1 mb-0 '}>
-                                            <div className={'font-2x'}>text</div>
-                                            <span className={'bolder font-2-5x word-wrap'}>price</span>
-                                        </div>
-                                    </section>
-                                    <Card body outline
-                                          className={"small-border padding-1-5x card-shadow overflow"}>
-                                                <span
-                                                    className={`grey-text text-darken-3 font-1-5x uppercase ribbon pl-2 pr-2`}>
-                                                   type
-                                                </span>
-
-                                        <CardTitle className="mt-3 mb-2">
-                                                <span className={'grey-text text-darken-3 bolder font-2x'}>
-                                                    text
-                                                </span>
-                                            <span className={`ml-2 mr-2 grey-text text-darken-2`}>|</span>
-                                            <span
-                                                className={'grey-text text-darken-3 bolder font-2x'}>
-                                                    text
-                                                </span>
-                                        </CardTitle>
-                                        <Button
-                                            color={'white'}
-                                            onClick={this.updateDetails.bind(this)}
-                                            className={`top-x right-x absolute ripple padding-0-2x`}
-                                            style={{lineHeight: "1px"}}>
-                                            <img src="../../static/Icons/edit.svg"
-                                                 width="18"/>
-                                        </Button>
-
-                                        <CardText className={`mt-1 mb-1 ripple`} style={{lineHeight: "3px"}}>
-
-
-                                            <i className="material-icons yellow-text text-accent-4 pointer font-4x animated-slow zoomIn"
-                                               title="Featured">star</i>
-
-                                            {/* <i class="material-icons grey-text text-accent-4 pointer font-3x  animated zoomIn"
-                                          title="Mark as Feature">star_border</i>*/}
-                                        </CardText>
-
-                                        <CardText className={'grey-text text-darken-4 mt-1 mb-0 '}>
-                                            <span className={'font-2-5x bold'}>symbol</span>
-                                            <span className={'bolder font-2-5x word-wrap margin-left-0-2x'}>text</span>
-                                        </CardText>
-
-                                        <CardText className={'mt-1 mb-2 text-center'} style={{maxWidth: 330}}>
-                                            <div
-                                                className={'grey-text text-darken-3 font-1-8x'}>text
+                                        <ListGroupItem className={'card-shadow mb-2 padding-top-2x padding-left-3x padding-right-3x padding-bottom-x hvr-underline-reveal'} key={i}>
+                                            <div className="ribbon__item">
+                                        <span className={'white-text bold font-x uppercase text-center ui-success'}>
+                                        cheque
+                                        </span>
                                             </div>
-                                            <div
-                                                className={'grey-text text-darken-5 font-1-5x mt-2'}>desc</div>
-                                        </CardText>
-                                        <CardText className={'mt-2 mb-0'}>
-                                            <Badge
-                                                className={"lighter pt-2 pb-2 ml-2 font-1-2x capitalize ui-success pointer"}
+                                            <ListGroupItemHeading className={'bolder font-1-5x relative mb-0'} style={{top:-10}}>
+                                                <Badge color="light" className={'pt-2 pl-2 pr-4 pb-2 font-1-2x thin-border-dashed left-align'}>
+                                                    {val.cabtype}
+                                                </Badge>
+                                            </ListGroupItemHeading>
+                                            <ListGroupItemHeading className={'bolder font-2x float-left'}>
+                                                {val.name}
+                                                <i id={"pr__contact-"+i} className={'material-icons grey-text text-darken-2 font-1-8x top-0-2x left-0-5x relative'}>
+                                                    info_outline
+                                                </i>
 
-                                                style={{width: 60}} pill> status
+                                                <UncontrolledTooltip placement="right" target={"pr__contact-"+i}>
+                                            <span className={'grid right left-align padding-0-5x'}>
+                                                <b>Per/Day : </b>
+                                                <label className={'mt-1'}>
+                                                    {val.amountday}
+                                                    <br/>
+                                                    -------
+                                                </label>
+                                                <b>per/Hour : </b>
+                                                <label className={'mt-1'}>
+                                                    {val.amounthour}
+                                                    <br/>
+                                                </label>
+                                            </span>
+                                                </UncontrolledTooltip>
+                                            </ListGroupItemHeading>
+
+                                            <Button className={'pt-0 pb-0 pl-1 pr-1 relative float-right right-0-5x left-x'} style={{top: "-7px"}} color="link"
+                                                    onClick={this.singleFetchUpdateCall.bind(this,val.id)}>
+                                                <img width={25} id={"pr__edit-"+i} className={'padding-0-2x'}
+                                                     src={"../../static/images/edit.png"}/>
+                                                <UncontrolledTooltip placement="top" target={"pr__edit-"+i}>
+                                                    Edit
+                                                </UncontrolledTooltip>
+                                            </Button>
+
+                                            <ListGroupItemText className={'mt-2 mb-2 clear'}>
+                                                <Badge className={'pt-2 pl-0 pr-4 pb-2 transparent font-1-2x no-border black-text left-align'}>
+                                                    {val.description} <span className={'font-1-2x grey-text text-darken-4 light relative ml-0'}> <br/>
+                                                    <br/>{"Tariff Created At ( " + moment(val.createdAt).format('LL') + " )"}</span>
+                                                </Badge>
+                                            </ListGroupItemText>
+
+                                            <ListGroupItemText className={'mt-2 mb-0 font-1-2x grey-text text-darken-3'}>
+                                                Tariff Status &nbsp;<code>{(val.status)?'Active':'Inactive'}</code>
+                                            </ListGroupItemText>
+
+                                            <Badge pill color={'light'} className={'float-right small-border padding-1-5x font-2x absolute right-2x'} style={{bottom: '25px'}}>
+                                                {"Night Charges " + val.nightcharge}
                                             </Badge>
-                                        </CardText>
-                                        <hr/>
-                                    </Card>
+                                        </ListGroupItem>
+                                    </ListGroup>
+                                )}
 
-
-                                </Col>
-
-
-
-                            </Row>
 
 
                         </ListGroup>
+                        {
+                            this.state.noDataFound &&
+                            <ListGroup className={'padding-2x mt-2'} style={{border: '2px solid black'}}>
+                                <div style={{margin: '20px auto'}} className="grey-text font-1-8x">No Data Found</div>
+                            </ListGroup>
+
+                        }
                     </div>
-
-
-
 
                 </div>
 
-                {/*<div className="jumbotron jumbotron-fluid">
-
-
-               </div>*/}
 
             </div>
 

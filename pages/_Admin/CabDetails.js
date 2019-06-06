@@ -34,13 +34,16 @@ import {Router} from "../../routes";
 import FileUpload from "../../component/FileUpload";
 import Validation from "../Validation";
 import axios from "axios";
-
+import {toast} from 'react-toastify';
+import $ from "jquery";
+import moment from 'moment';
 
 class CabDetails extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             FormData: {
+                id: '',
                 imageid: null,
                 regno: '',
                 company: '',
@@ -51,16 +54,24 @@ class CabDetails extends React.Component {
                 postalcode: ''
             },
             validationTest: false,
-            loading: false
+            loading: false,
+            updateFlag: false,
+            cabList: [],
+            noDataFound: false
 
         };
 
+    }
+
+    componentDidMount() {
+        this.getAllCabDetails();
     }
 
     clearFormData(){
         this.setState({
             FormData: {
                 ...this.state.FormData,
+                id: '',
                 imageid: null,
                 regno: '',
                 company: '',
@@ -71,7 +82,8 @@ class CabDetails extends React.Component {
                 postalcode: ''
             },
             validationTest: false,
-            loading: false
+            loading: false,
+            updateFlag: false
         });
     }
 
@@ -101,6 +113,7 @@ class CabDetails extends React.Component {
             Validation.positiveNumber(this.state.FormData.postalcode)){
 
             console.log("all validation Done");
+            // delete this.state.FormData.id;
 
             var FormData = {
                 imageid: this.state.FormData.imageid,
@@ -113,30 +126,143 @@ class CabDetails extends React.Component {
                 postalcode: this.state.FormData.postalcode
             }
             console.log(FormData);
-            // http://localhost:4000/api/cab/create
-            axios.post('http://5793bf8a.ngrok.io/api/cab/create',FormData).then((response) => {
+
+            axios.post('http://4eb3aff0.ngrok.io/api/cab/create',FormData).then((response) => {
                 const res = response;
                 console.log(res);
 
-                /*if(res.status === 200 && res.statusText === "OK"){
-                    this.setState({loginMsg: '' , loading: false});
-                    localStorage.setItem('adminKey', res.data.accessToken);
-                    console.log("Admin login successfully");
-                    this.clearSignInFormData();
-                    console.log(Router);
-                    // Router.pushRoute('/adminConfig');
-                    Router.push({ pathname: '/adminConfig' })
-                    console.log("------------------");
+                if(res.status === 200 && res.statusText === "OK"){
+                    this.setState({loading: false});
+                    toast.success('Cab added successful');
+                    this.clearFormData();
+                    this.getAllCabDetails();
                 }else{
-                    console.log("Admin login not successful");
-                    this.setState({loginMsg: 'Email ID or password Invalid',loading: false});
-                }*/
+                    toast.error('Something wrong with cab addition');
+                    this.setState({loading: false});
+                }
 
             }).catch((error) => {
                 console.log("Inside catch block login Admin" + error);
-                this.setState({loginMsg: 'Email ID or password Invalid',loading: false});
+                this.setState({loading: false});
             });
+        }else{
+            toast.error('One or more required fields are missing');
+            this.setState({loading: false});
         }
+    }
+
+    UpdateCarDetails(){
+        this.setState({
+            validationTest: true,
+            loading: true
+        })
+
+        if(Validation.stringValidate(this.state.FormData.regno) &&
+            Validation.stringValidate(this.state.FormData.company) &&
+            Validation.stringValidate(this.state.FormData.model) &&
+            Validation.stringValidate(this.state.FormData.type) &&
+            Validation.stringValidate(this.state.FormData.state) &&
+            Validation.stringValidate(this.state.FormData.district) &&
+            Validation.positiveNumber(this.state.FormData.postalcode)){
+
+            console.log("all validation Done");
+
+            var FormData = {
+                imageid: this.state.FormData.imageid,
+                regno: this.state.FormData.regno,
+                company: this.state.FormData.company,
+                model: this.state.FormData.model,
+                type: this.state.FormData.type,
+                state: this.state.FormData.state,
+                district: this.state.FormData.district,
+                postalcode: this.state.FormData.postalcode
+            }
+            console.log(FormData);
+
+            axios.put('http://4eb3aff0.ngrok.io/api/cab/cabupdate/'+this.state.FormData.id,FormData).then((response) => {
+                const res = response;
+                console.log(res);
+
+                if(res.status === 200 && res.statusText === "OK"){
+                    this.setState({loading: false});
+                    toast.success('Cab Updated successful');
+                    this.clearFormData();
+                    this.getAllCabDetails();
+                }else{
+                    toast.error('Something wrong with cab Update');
+                    this.setState({loading: false});
+                }
+
+            }).catch((error) => {
+                console.log("Inside catch block cab update" + error);
+                this.setState({loading: false});
+            });
+        }else{
+            toast.error('One or more required fields are missing');
+            this.setState({loading: false});
+        }
+    }
+
+    singleFetchUpdateCall(id){
+        console.log(id);
+        $('html, body').animate({
+            scrollTop: $("#mainId").offset().top
+        }, 600);
+
+
+        axios.get('http://4eb3aff0.ngrok.io/api/cab/getcabbyid/'+id).then((response) => {
+            const res = response;
+            console.log(res);
+            if(res.status === 200 && res.statusText === "OK"){
+                console.log(res.data.cabs[0]);
+                this.setState({
+                    FormData: {
+                        ...this.state.FormData,
+                        id: res.data.cabs[0].id,
+                        imageid: res.data.cabs[0].imageid,
+                        regno: res.data.cabs[0].regno,
+                        company: res.data.cabs[0].company,
+                        model: res.data.cabs[0].model,
+                        type: res.data.cabs[0].type,
+                        state: res.data.cabs[0].state,
+                        district: res.data.cabs[0].district,
+                        postalcode: res.data.cabs[0].postalcode,
+                    },
+                    updateFlag: true
+                })
+
+            }else{
+                toast.error('Something wrong with cab List Fetch API');
+            }
+
+
+        }).catch((error) => {
+            console.log("Inside catch block fetch all cab" + error);
+
+        });
+    }
+
+    getAllCabDetails(){
+
+        axios.get('http://4eb3aff0.ngrok.io/api/cab').then((response) => {
+            const res = response;
+            console.log(res);
+            if(res.status === 200 && res.statusText === "OK"){
+                if(res.data.cabs.length < 1){
+
+                    this.setState({cabList: res.data.cabs , noDataFound: true})
+                }else{
+                    this.setState({cabList: res.data.cabs , noDataFound: false})
+                }
+            }else{
+                toast.error('Something wrong with cab List Fetch API');
+            }
+
+
+        }).catch((error) => {
+            console.log("Inside catch block fetch all cab" + error);
+
+        });
     }
 
 
@@ -145,7 +271,7 @@ class CabDetails extends React.Component {
         return (
 
            <div>
-               <div className="jumbotron">
+               <div className="jumbotron" id="mainId">
 
                    <div className="jumbotron" style={{backgroundColor: '#e1e1d0'}}>
 
@@ -255,12 +381,20 @@ class CabDetails extends React.Component {
 
 
                            <Col sm={{ size: 3, offset: 9 }}>
-                               <Button className="float-right brand-primary capitalize text-center mt-4 mr-0 flex"
-                                       onClick={this.addCarDetails.bind(this)}
-                               >
-
-                                   Save
-                               </Button>
+                               {
+                                   this.state.updateFlag ?
+                                       <Button className="float-right brand-primary capitalize text-center mt-4 mr-0 flex"
+                                               onClick={this.UpdateCarDetails.bind(this)}
+                                               disabled={this.state.loading}>
+                                           Update
+                                       </Button>
+                                       :
+                                       <Button className="float-right brand-primary capitalize text-center mt-4 mr-0 flex"
+                                               onClick={this.addCarDetails.bind(this)}
+                                               disabled={this.state.loading}>
+                                           Save
+                                       </Button>
+                               }
                            </Col>
 
                        </Row>
@@ -270,63 +404,70 @@ class CabDetails extends React.Component {
                    <div className="jumbotron" style={{backgroundColor: '#e1e1d0'}}>
 
                        <ListGroup className={'padding-2x thin-border'}>
-                           {[...Array(3)].map((x, i) =>
-                               <ListGroup key={i}>
+                           {
 
-                                   <ListGroupItem className={'card-shadow mb-2 padding-top-2x padding-left-3x padding-right-3x padding-bottom-x hvr-underline-reveal'} key={i}>
-                                       <div className="ribbon__item">
-                                        <span className={'white-text bold font-x uppercase text-center ui-success'}>
-                                        cheque
-                                        </span>
-                                       </div>
-                                       <ListGroupItemHeading className={'bolder font-1-5x relative mb-0'} style={{top:-10}}>
-                                           <Badge color="light" className={'pt-2 pl-2 pr-4 pb-2 font-1-2x thin-border-dashed left-align'}>
-                                               Cab Number
-                                           </Badge>
-                                       </ListGroupItemHeading>
-                                       <ListGroupItemHeading className={'bolder font-2x float-left'}>
-                                           DriverName
-                                           <i id={"pr__contact-"+i} className={'material-icons grey-text text-darken-2 font-1-8x top-0-2x left-0-5x relative'}>
-                                               info_outline
-                                           </i>
+                               this.state.cabList.length > 0 && this.state.cabList.map((val, i) =>
+                                   <ListGroup key={i}>
 
-                                           <UncontrolledTooltip placement="right" target={"pr__contact-"+i}>
+                                       <ListGroupItem className={'card-shadow mb-2 padding-top-2x padding-left-3x padding-right-3x padding-bottom-x hvr-underline-reveal'} key={i}>
+                                           <div className="ribbon__item">
+                                                <span className={'white-text bold font-x uppercase text-center ui-success'}>
+                                                cheque
+                                                </span>
+                                           </div>
+                                           <ListGroupItemHeading className={'bolder font-1-5x relative mb-0'} style={{top:-10}}>
+                                               <Badge color="light" className={'pt-2 pl-2 pr-4 pb-2 font-1-2x thin-border-dashed left-align'}>
+                                                   {val.regno}
+                                               </Badge>
+                                           </ListGroupItemHeading>
+                                           <ListGroupItemHeading className={'bolder font-2x float-left'}>
+                                               {val.company}
+                                               <i id={"pr__contact-"+i} className={'material-icons grey-text text-darken-2 font-1-8x top-0-2x left-0-5x relative'}>
+                                                   info_outline
+                                               </i>
+
+                                               <UncontrolledTooltip placement="right" target={"pr__contact-"+i}>
                                             <span className={'grid right left-align padding-0-5x'}>
                                                 <b>Address : </b>
                                                 <label className={'mt-1'}>
-                                                    PO Box 1964 Cupertino
-                                                    Cupertino, Pin-95015<br/>
-                                                    California ,United States
+                                                    {
+                                                        val.district
+                                                    }<br/>
+                                                    {
+                                                        val.postalcode
+                                                    }
                                                 </label>
-                                                <b>Contact : </b>
+                                                <b>State : </b>
                                                 <label className={'mt-1'}>
-                                                    debajit@collegify.com
-                                                    <br/>+91 5478965412
+                                                    {
+                                                        val.state
+                                                    }
+                                                    <br/>
                                                 </label>
                                             </span>
-                                           </UncontrolledTooltip>
-                                       </ListGroupItemHeading>
+                                               </UncontrolledTooltip>
+                                           </ListGroupItemHeading>
 
-                                       <Button className={'pt-0 pb-0 pl-1 pr-1 relative float-right right-0-5x left-x'} style={{top: "-7px"}} color="link">
-                                           {/*<i id={"pr__share-"+i} className={'material-icons relative top-0-2x font-2x'}>share</i>*/}
-                                           <img width={25} id={"pr__edit-"+i} className={'padding-0-2x'}
-                                                src={"../../static/images/edit.png"}/>
-                                           <UncontrolledTooltip placement="top" target={"pr__edit-"+i}>
-                                               Edit
-                                           </UncontrolledTooltip>
-                                       </Button>{' '}
+                                           <Button className={'pt-0 pb-0 pl-1 pr-1 relative float-right right-0-5x left-x'} style={{top: "-7px"}} color="link"
+                                                   onClick={this.singleFetchUpdateCall.bind(this,val.id)}>
+                                               <img width={25} id={"pr__edit-"+i} className={'padding-0-2x'}
+                                                    src={"../../static/images/edit.png"}/>
+                                               <UncontrolledTooltip placement="top" target={"pr__edit-"+i}>
+                                                   Edit
+                                               </UncontrolledTooltip>
+                                           </Button>
 
-                                       <Button id="UncontrolledPopover" className={'pt-0 pb-0 pl-1 pr-1 relative float-right right-0-5x left-x'} style={{top: "-7px"}} color="link">
-                                           {/*<i id={"pr__share-"+i} className={'material-icons relative top-0-2x font-2x'}>share</i>*/}
+                                           {/*<Button id="UncontrolledPopover" className={'pt-0 pb-0 pl-1 pr-1 relative float-right right-0-5x left-x'} style={{top: "-7px"}} color="link">
+                                           <i id={"pr__share-"+i} className={'material-icons relative top-0-2x font-2x'}>share</i>
                                            <img width={25} id={"pr__share-"+i} className={'padding-0-2x'}
                                                 src={"../../static/images/007-share.png"}/>
                                            <UncontrolledTooltip placement="top" target={"pr__share-"+i}>
                                                Share via Email
                                            </UncontrolledTooltip>
 
-                                       </Button>
+                                       </Button>*/}
 
-                                       <UncontrolledPopover placement="bottom" className="no-border card-shadow" target="UncontrolledPopover">
+                                           {/*<UncontrolledPopover placement="bottom" className="no-border card-shadow" target="UncontrolledPopover">
                                            <PopoverHeader className={'capitalize'}>enter an email address</PopoverHeader>
                                            <PopoverBody>
 
@@ -335,30 +476,43 @@ class CabDetails extends React.Component {
                                        </UncontrolledPopover>
 
                                        <Button className={'pt-0 pb-0 pl-1 pr-1 relative float-right right-0-5x left-x'}  style={{top: "-7px"}} color="link">
-                                           {/*<i id={"pr__download-"+i} className={'material-icons relative top-0-2x font-2x'}>cloud_download</i>*/}
+                                           <i id={"pr__download-"+i} className={'material-icons relative top-0-2x font-2x'}>cloud_download</i>
                                            <img id={"pr__download-"+i} width={25} className={'padding-0-2x'}
                                                 src={"/static/images/028-download.png"}/>
 
-                                       </Button>
+                                       </Button>*/}
 
-                                       <ListGroupItemText className={'mt-2 mb-2 clear'}>
-                                           <Badge className={'pt-2 pl-0 pr-4 pb-2 transparent font-1-2x no-border black-text left-align'}>
-                                               text <span className={'font-1-2x grey-text text-darken-4 light relative ml-0'}> <br/><br/>Paid on 30th January,2019</span>
+                                           <ListGroupItemText className={'mt-2 mb-2 clear'}>
+                                               <Badge className={'pt-2 pl-0 pr-4 pb-2 transparent font-1-2x no-border black-text left-align'}>
+                                                   {val.model} <span className={'font-1-2x grey-text text-darken-4 light relative ml-0'}> <br/><br/>{
+                                                           "Cab Registered with us from ( " + moment(val.createdAt).format('LL') + " )"
+                                                     }</span>
+                                               </Badge>
+                                           </ListGroupItemText>
+
+                                           <ListGroupItemText className={'mt-2 mb-0 font-1-2x grey-text text-darken-3'}>
+                                               driver details &nbsp; <code>Licence Number</code>
+                                           </ListGroupItemText>
+
+                                           <Badge pill color={'light'} className={'float-right small-border padding-1-5x font-2x absolute right-2x text-uppercase'} style={{bottom: '25px'}}>
+                                               {
+                                                   val.type
+                                               }
                                            </Badge>
-                                       </ListGroupItemText>
+                                       </ListGroupItem>
+                                   </ListGroup>
+                               )}
 
-                                       <ListGroupItemText className={'mt-2 mb-0 font-1-2x grey-text text-darken-3'}>
-                                           driver details &nbsp; <code>Licence Number</code>
-                                       </ListGroupItemText>
-
-                                       <Badge pill color={'light'} className={'float-right small-border padding-1-5x font-2x absolute right-2x'} style={{bottom: '25px'}}>
-                                           USD 200000
-                                       </Badge>
-                                   </ListGroupItem>
-                               </ListGroup>
-                           )}
 
                        </ListGroup>
+
+                       {
+                           this.state.noDataFound &&
+                           <ListGroup className={'padding-2x mt-2'} style={{border: '2px solid black'}}>
+                                <div style={{margin: '20px auto'}} className="grey-text font-1-8x">No Data Found</div>
+                            </ListGroup>
+
+                       }
                    </div>
 
 

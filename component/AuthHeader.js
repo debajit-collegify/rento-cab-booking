@@ -3,6 +3,8 @@ import {Link , Router} from '../routes';
 import { Row, Badge, ListGroup, ListGroupItem, Collapse, Navbar, NavbarToggler,  NavbarBrand, Nav, NavItem, NavLink, UncontrolledDropdown,  DropdownToggle, DropdownMenu, DropdownItem} from 'reactstrap';
 import Header from '../_Layout/Header'
 import Validation from "../pages/Validation";
+import {toast,ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.min.css';
 
 class Index extends React.Component {
     constructor(props){
@@ -121,6 +123,19 @@ class Index extends React.Component {
                         <span className="float-right margin-top-2x  font-weight-lighter font-1-8x">{this.state.userName}</span>
                     </ListGroupItem>
                 </ListGroup>
+
+                <ToastContainer
+                    position="bottom-right"
+                    autoClose={3000}
+                    hideProgressBar={true}
+                    newestOnTop={false}
+                    bodyClassName= {'pl-3 pb-3 pt-3 pr-3'}
+                    closeOnClick
+                    className={'font-1-5x bold'}
+                    rtl={false}
+                    pauseOnVisibilityChange
+                    pauseOnHover
+                />
             </Row>
         );
     }

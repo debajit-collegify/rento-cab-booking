@@ -23,6 +23,7 @@ import AuthHeader from '../../component/AuthHeader';
 import ViewModal from './viewModal';
 import axios from 'axios';
 import _ from 'lodash';
+import {toast} from "react-toastify";
 
 
 
@@ -43,7 +44,8 @@ class Index extends React.Component {
             minVal: '',
             maxPrice: '',
             minPrice: '',
-            msg:''
+            msg:'',
+            noDataFound: false
         };
             this.toggle = this.toggle.bind(this);
             this.getAllCarType = this.getAllCarType.bind(this);
@@ -52,6 +54,30 @@ class Index extends React.Component {
 
     static getInitialProps({query}) {
         return {query}
+    }
+
+
+    getAllCabDetails(){
+
+        axios.get('http://bb9f06da.ngrok.io/api/cab').then((response) => {
+            const res = response;
+            console.log(res);
+            if(res.status === 200 && res.statusText === "OK"){
+                if(res.data.cabs.length < 1){
+
+                    this.setState({cabDetails: res.data.cabs ,cabDetailsCopy: res.data.cabs, noDataFound: true})
+                }else{
+                    this.setState({cabDetails: res.data.cabs ,cabDetailsCopy: res.data.cabs, noDataFound: false})
+                }
+            }else{
+                toast.error('Something wrong with cab List Fetch API');
+            }
+
+
+        }).catch((error) => {
+            console.log("Inside catch block fetch all cab" + error);
+
+        });
     }
 
     toggle() {
@@ -223,7 +249,7 @@ class Index extends React.Component {
                 this.setState({cabDetails: data});
             })*/
 
-        axios.get('http://localhost:4010/cab-details')
+        /*axios.get('http://localhost:4010/cab-details')
             .then(response => {
                 let data = response.data;
                 this.setState({cabDetails : data , cabDetailsCopy : data} ,
@@ -234,14 +260,17 @@ class Index extends React.Component {
             })
             .catch(error => {
                 console.log(error);
-            });
+            });*/
+        this.getAllCabDetails();
+
+
+
 
     }
 
 
 
     render() {
-        //console.log(this.state);
         return (
             <div>
                 {/*Section of Header start*/}
@@ -258,24 +287,24 @@ class Index extends React.Component {
                     <div className="margin-top-2x jumbotron" style={{width: '75%' ,marginLeft: '10%'}}>
                         <CardTitle className="font-4x lighter grey-text text-darken-2">List of Cabs</CardTitle><hr/>
                         <Row className="margin-top-2x">
-                            {this.state.cabDetailsCopy.map((dynamicData, i) =>
+                            {this.state.cabDetailsCopy.map((val, i) =>
                                 <Col key={i} sm="3"className="margin-bottom-2x animated fadeIn">  {/*hvr-grow*/}
 
                                     <Card className="box-shadow" style={{width: '100%'}} >
-                                        <span className="notify-badge badge">{dynamicData.carType}</span>
-                                       <CardImg top width="100%" src={dynamicData.imgSrc} alt="Card image cap" />
+                                        <span className="notify-badge badge">{val.type}</span>
+                                       <CardImg top width="100%" src="../../static/images/two.png" alt="Card image cap" />
                                         <CardBody>
                                             <CardTitle className="font-weight-lighter no-margin font-weight-light font-2x">
-                                                <span>{dynamicData.cabTitle}</span>
+                                                <span>{val.company}</span>
                                             </CardTitle>
                                             <CardTitle className="no-margin no-padding">
-                                                <span className="font-1-2x logo-font">{dynamicData.carNUmber}</span>
+                                                <span className="font-1-5x logo-font">{val.regno}</span>
                                             </CardTitle>
                                         </CardBody>
                                         <div className="row">
                                             <div className="col-6">
-                                                <span className="padding-left-1-2x font-2x font-weight-bold">{dynamicData.budgetPlanPerHr} INR</span><br/>
-                                                <span className="padding-left-1-2x font-1-3x">/Hour</span>
+                                                {/*<span className="padding-left-1-2x font-2x font-weight-bold">{val.state}</span><br/>*/}
+                                                <span className="padding-left-1-2x font-1-7x font-weight-bolder">{val.model}</span>
 
                                             </div>
                                             <div className="col-6">
@@ -289,7 +318,13 @@ class Index extends React.Component {
                             )}
                             {/*opening modal*/}
 
-                            {(this.state.view)?(<ViewModal welcomePageData={this.props.query} modalState={this.state.viewModal} toggleViewDetailsModal={this.toggleViewDetails.bind(this)} indexNo={this.state.viewIndex} data={this.state.cabDetails} />):''}
+                            {(this.state.view) && <ViewModal welcomePageData={this.props.query}
+                                                           modalState={this.state.viewModal}
+                                                           toggleViewDetailsModal={this.toggleViewDetails.bind(this)}
+                                                           indexNo={this.state.viewIndex}
+                                                           data={this.state.cabDetails} />
+
+                            }
 
                             {/*closing modal*/}
                         </Row>
