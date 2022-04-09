@@ -22,7 +22,7 @@
     "jquery": "^3.4.1",
     "json-server": "^0.15.0",
     "lodash": "^4.17.11",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "next": "^7.0.3",
     "next-routes": "^1.4.2",
     "react": "^16.8.6",
